@@ -13,6 +13,7 @@ import jcuda.runtime.*;
  * @author danie
  */
 public class App {
+    /*
     public static void main(String args[])
     {
         Pointer pointer = new Pointer();
@@ -22,6 +23,7 @@ public class App {
         
         System.out.println("RRR");
     }
+    */
 }
 
 
