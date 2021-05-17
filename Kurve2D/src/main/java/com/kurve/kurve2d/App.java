@@ -15,6 +15,8 @@ import org.json.simple.parser.JSONParser;
 
 import utils.JSONUtils;
 
+import com.kurve.kurve2d.Graph;
+
 /**
  * App initialization, entry point
  * @author DanElias
@@ -23,11 +25,13 @@ public class App {
     private JCudaSpringForceCalculator jcuda_calculator;
     private String graph_json_url;
     private JSONObject graph_json_object;
+    private Graph graph;
     
     public App(String json_url)throws IOException{
         this.graph_json_url = json_url;
         this.graph_json_object = JSONUtils.readJson(this.graph_json_url);
         this.jcuda_calculator = new JCudaSpringForceCalculator("", 1024);
+        this.graph = new Graph(this.graph_json_object);
     }
     
     public void start(){

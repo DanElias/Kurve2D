@@ -5,7 +5,11 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
  
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  *
@@ -42,4 +46,17 @@ public class JSONUtils {
             return jsonObject;
         }
     }
+    
+    public static List<JSONObject> objectToJSONObjectArrayList(Object obj) {
+        List<JSONObject> list;
+        if (obj.getClass().isArray()) {
+            list = Arrays.asList((JSONObject[])obj);
+        } else if (obj instanceof Collection) {
+            list = new ArrayList<>((Collection<JSONObject>)obj);
+        } else {
+            list = Arrays.asList((JSONObject[])obj);
+        }
+        return list;
+    }
+    
 }
