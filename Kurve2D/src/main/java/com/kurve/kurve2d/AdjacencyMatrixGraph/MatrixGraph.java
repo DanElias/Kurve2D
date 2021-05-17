@@ -25,11 +25,10 @@ import com.kurve.kurve2d.AdjacencyMatrixGraph.Vertex;
 public class MatrixGraph {
     private HashMap<String, Integer> vertices_ids; // Original id - mat index mapping
     private ArrayList<Edge> edges;
-    public int[][] adjacency_matrix;
+    private int[][] adjacency_matrix;
+    public int[] linear_adjacency_matrix;
     private int N; // CUDA problem size
     private int n; // number of vertices
-    private float[][] x_positions_matrix;
-    private float[][] y_positions_matrix;
     private List<JSONObject> vertices_list; // Json vertices
     private List<JSONObject> edges_list; // Json edges
     
@@ -45,12 +44,13 @@ public class MatrixGraph {
         
         this.N = calculateN();
         
-        this.x_positions_matrix = new float[this.n][this.n];
-        this.y_positions_matrix = new float[this.n][this.n];
-        this.adjacency_matrix = new int[this.N][this.N];
+        this.adjacency_matrix = new int[this.n][this.n];
+        this.linear_adjacency_matrix = new int[this.N];
         
         setVertices();
         setEdges();
+        printAdjacencyMatrix();
+        printLinearAdjacencyMatrix();
     }
     
     private void setVertices() {
@@ -72,9 +72,32 @@ public class MatrixGraph {
         }
     }
     
-    public void addEdge(int source, int target){
+    public void addEdge(int source, int target) {
+        this.linear_adjacency_matrix[source*this.n+target] = 1; // linear matrix
         adjacency_matrix[source][target] = 1;
         adjacency_matrix[source][target] = 1;
+    }
+    
+    private void printAdjacencyMatrix() {
+        System.out.println("\nAdjacency matrix: ");
+        for (int i = 0; i < this.n; i++){
+		for (int j = 0; j < this.n; j++){
+			System.out.print("\t" + this.adjacency_matrix[i][j]);
+		}
+		System.out.println("\n");
+	}
+        System.out.println("\n");
+    }
+    
+    private void printLinearAdjacencyMatrix() {
+        System.out.println("\nLinear adjacency matrix: ");
+        for (int i = 0; i < this.n; i++){
+		for (int j = 0; j < this.n; j++){
+			System.out.print("\t" + this.linear_adjacency_matrix[i*this.n+j]);
+		}
+		System.out.println("\n");
+	}
+        System.out.println("\n");
     }
     
     public int calculateN() {
@@ -86,11 +109,15 @@ public class MatrixGraph {
         return this.N;
     }
     
-    public int getn(){
+    public int getNumberOfVertices(){
         return this.n;
     }
     
     public int[][] getAdjacencyMatrix() {
         return this.adjacency_matrix;
+    }
+    
+    public int[] getLinearAdjacencyMatrix() {
+        return this.linear_adjacency_matrix;
     }
 }

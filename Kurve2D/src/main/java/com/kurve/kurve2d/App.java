@@ -37,9 +37,9 @@ public class App {
         
         this.jcuda_calculator = new JCudaSpringForceCalculator(
                 "", // ptx filename url
-                this.matrix_graph.getN(), // num of vertices * num of vertices
+                this.matrix_graph.getNumberOfVertices(), // num of vertices * num of vertices
                 this.list_graph.getN(), // n * n = size of x/y positions matrix
-                this.matrix_graph.getAdjacencyMatrix(), // adjacency matrix graph
+                this.matrix_graph.getLinearAdjacencyMatrix(), // adjacency matrix graph
                 this.list_graph.getXPositionsMatrix(),
                 this.list_graph.getYPositionsMatrix()
         );

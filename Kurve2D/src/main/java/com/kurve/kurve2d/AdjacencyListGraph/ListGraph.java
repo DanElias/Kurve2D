@@ -29,8 +29,8 @@ public class ListGraph {
     private ArrayList<Edge> edges;
     private int N; // CUDA problem size
     private int n; // number of vertices
-    public float[][] x_positions_matrix;
-    public float[][] y_positions_matrix;
+    public float[] x_positions;
+    public float[] y_positions;
     private List<JSONObject> vertices_list; // Json vertices
     private List<JSONObject> edges_list; // Json edges
     
@@ -48,8 +48,8 @@ public class ListGraph {
         
         this.N = calculateN();
         
-        this.x_positions_matrix = new float[this.n][this.n];
-        this.y_positions_matrix = new float[this.n][this.n];
+        this.x_positions = new float[this.N];
+        this.y_positions = new float[this.N];
         
         setVertices();
         setEdges();
@@ -106,16 +106,12 @@ public class ListGraph {
     }
     
     public void setXYPositionsMatricesInitialPositions() {
-        for (int i = 0; i < this.n; i++){
-            for (int j = 0; j < this.n; j++){
-                    this.x_positions_matrix[i][j] = (float) 1;
-            }
+        for (int i = 0; i < this.N; i++){
+            this.x_positions[i] = (float) 1;
 	}
         
-        for (int i = 0; i < this.n; i++){
-            for (int j = 0; j < this.n; j++){
-                    this.y_positions_matrix[i][j] = (float) 1;
-            }
+        for (int i = 0; i < this.N; i++){
+            this.y_positions[i] = (float) 1;
 	}
     }
     
@@ -123,7 +119,7 @@ public class ListGraph {
         System.out.println("\nX positions: ");
         for (int i = 0; i < this.n; i++){
 		for (int j = 0; j < this.n; j++){
-			System.out.print("\t" + this.x_positions_matrix[i][j]);
+			System.out.print("\t" + this.x_positions[i*this.n+j]);
 		}
 		System.out.println("\n");
 	}
@@ -131,7 +127,7 @@ public class ListGraph {
         System.out.println("Y positions: ");
         for (int i = 0; i < this.n; i++){
 		for (int j = 0; j < this.n; j++){
-			System.out.print("\t"+ this.y_positions_matrix[i][j]);
+			System.out.print("\t" + this.y_positions[i*this.n+j]);
 		}
 		System.out.println("\n");
 	}
@@ -152,11 +148,11 @@ public class ListGraph {
         return this.n;
     }
     
-    public float[][] getXPositionsMatrix() {
-        return this.x_positions_matrix;
+    public float[] getXPositionsMatrix() {
+        return this.x_positions;
     }
     
-    public float[][] getYPositionsMatrix() {
-        return this.x_positions_matrix;
+    public float[] getYPositionsMatrix() {
+        return this.y_positions;
     }
 }

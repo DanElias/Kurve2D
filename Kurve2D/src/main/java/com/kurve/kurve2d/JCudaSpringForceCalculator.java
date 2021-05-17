@@ -38,8 +38,14 @@ public class JCudaSpringForceCalculator {
     private CUmodule module;
     private CUfunction function;
     private int N;
+    private int positions_n;
     private int size_bytes;
-    private MatrixGraph graph;
+    private int size_bytes_linear_adjacency_matrix;
+    private float[] x_positions;
+    private float[] y_positions;
+    private int[] linear_adjacency_matrix;
+    private final int THREADS_PER_BLOCK = 512; //threads per block blockSizeX 256
+    private int GRID_SIZE; //gridSizeX
     
     /**
      * Entry point
@@ -50,10 +56,10 @@ public class JCudaSpringForceCalculator {
     public JCudaSpringForceCalculator(
             String ptxFileName, // ptx filename url
             int N, // num of vertices * num of vertices
-            int posN, // n * n = size of x/y positions matrix
-            int[][] adjacency_matrix, // adjacency matrix graph
-            float[][] x_positions_matrix,
-            float[][] y_positions_matrix) throws IOException {
+            int positions_n, // n * n = size of x/y positions matrix
+            int[] linear_adjacency_matrix, // adjacency matrix graph
+            float[] x_positions,
+            float[] y_positions) throws IOException {
         
         // Enable exceptions and omit all subsequent error checks
         JCudaDriver.setExceptionsEnabled(true);
@@ -85,64 +91,70 @@ public class JCudaSpringForceCalculator {
         
         // Initialize problem size N
         this.N = N;
-        this.size_bytes = this.N * Sizeof.FLOAT;
-        this.graph = graph;
+        this.positions_n = positions_n;
+        this.size_bytes = this.positions_n * Sizeof.FLOAT;
+        this.size_bytes_linear_adjacency_matrix = this.N * this.N * Sizeof.INT;
+        this.linear_adjacency_matrix = linear_adjacency_matrix;
+        this.x_positions = x_positions;
+        this.y_positions = y_positions;
+        
+        this.GRID_SIZE = (int) Math.ceil((double)this.positions_n / this.THREADS_PER_BLOCK); //gridSizeX
     }
     
-    public void calculate(){
-        
+    public void calculate(){  
         //*** Host variables **//
-        // Allocate host input data
-        float hostInputA[] = new float[this.N];
-        float hostInputB[] = new float[N];
-        // Allocate host output memory
-        float hostOutput[] = new float[this.N];
+        float result_positions[] = new float[this.positions_n];
         
         //*** Device variables **//
-        // Allocate device input data
-        CUdeviceptr deviceInputA = new CUdeviceptr();
-        cuMemAlloc(deviceInputA, this.size_bytes); // cudaMalloc
-        CUdeviceptr deviceInputB = new CUdeviceptr(); // ptr to device variable
-        cuMemAlloc(deviceInputB, this.size_bytes); // cudaMalloc
-        // Allocate device output memory
-        CUdeviceptr deviceOutput = new CUdeviceptr();
-        cuMemAlloc(deviceOutput, this.size_bytes);
-
+        // Allocate Device Linear Adjacency Matrix
+        CUdeviceptr device_linear_adjacency_matrix = new CUdeviceptr();
+        cuMemAlloc(device_linear_adjacency_matrix, this.size_bytes_linear_adjacency_matrix);
         
-        // Fill host input data
-        for(int i = 0; i < this.N; i++){
-            hostInputA[i] = (float)i;
-            hostInputB[i] = (float)i;
-        }
+        // Allocate Device X positions
+        CUdeviceptr device_x_positions = new CUdeviceptr();// ptr to device variable
+        cuMemAlloc(device_x_positions, this.size_bytes); // cudaMalloc
+        
+        // Allocate Device Y positions
+        CUdeviceptr device_y_positions = new CUdeviceptr(); 
+        cuMemAlloc(device_y_positions, this.size_bytes);
+        
+        // Allocate device output memory
+        CUdeviceptr device_result_positions = new CUdeviceptr();
+        cuMemAlloc(device_result_positions, this.size_bytes);
 
+        //*** Cuda Memcpy Host to Device **//
         // Copy the host input data to the device variables
         cuMemcpyHtoD( //cudaMemcpy HostToDevice
-            deviceInputA, 
-            Pointer.to(hostInputA), 
-            this.N * Sizeof.FLOAT);
+            device_linear_adjacency_matrix, 
+            Pointer.to(this.linear_adjacency_matrix), 
+            this.size_bytes_linear_adjacency_matrix);
+        
+        cuMemcpyHtoD( //cudaMemcpy HostToDevice
+            device_x_positions, 
+            Pointer.to(this.x_positions), 
+            this.size_bytes);
        
         cuMemcpyHtoD( //cudaMemcpy HostToDevice
-            deviceInputB,
-            Pointer.to(hostInputB),
+            device_y_positions,
+            Pointer.to(this.y_positions),
             this.size_bytes);
-
-        // Set up the kernel parameters: A pointer to an array
-        // of pointers which point to the actual values.
-        Pointer kernelParameters = Pointer.to(
-            Pointer.to(new int[]{this.N}), // device problem size
-            Pointer.to(deviceInputA), // params to be sent to kernel __global__
-            Pointer.to(deviceInputB),
-            Pointer.to(deviceOutput)
-        );
-
-        // Blocks and Grid sizes
-        int blockSizeX = 256;
-        int gridSizeX = (int)Math.ceil((double)this.N / blockSizeX);
         
+        //*** Kernel Params **//
+        Pointer kernelParameters = Pointer.to(
+        // params to be sent to kernel __global_
+            Pointer.to(new int[]{this.N}), // number of vertices
+            Pointer.to(new int[]{this.positions_n}), // size n * n of positions matrices
+            Pointer.to(device_linear_adjacency_matrix),
+            Pointer.to(device_x_positions),
+            Pointer.to(device_y_positions),
+            Pointer.to(device_result_positions)
+        );
+        
+        //*** Kernel Call **// 
         // Call the kernel function.
         cuLaunchKernel(this.function,
-            gridSizeX,  1, 1,      // Grid dimension
-            blockSizeX, 1, 1,      // Block dimension
+            GRID_SIZE,  1, 1,      // Grid dimension
+            THREADS_PER_BLOCK, 1, 1,// Block dimension
             0, null,               // Shared memory size and stream
             kernelParameters, null // Kernel- and extra parameters
         );
@@ -152,31 +164,30 @@ public class JCudaSpringForceCalculator {
 
         // Copy the device output to the host.
         cuMemcpyDtoH(
-            Pointer.to(hostOutput),
-            deviceOutput,
+            Pointer.to(result_positions),
+            device_result_positions,
             this.size_bytes);
-
         
         // Verify the result
-        boolean passed = true;
-        for(int i = 0; i < this.N; i++)
-        {
-            float expected = i+i;
-            if (Math.abs(hostOutput[i] - expected) > 1e-5)
-            {
-                System.out.println(
-                    "At index "+i+ " found "+hostOutput[i]+
-                    " but expected "+expected);
-                passed = false;
-                break;
-            }
-        }
-        System.out.println("Test "+(passed?"PASSED":"FAILED"));
+        printXYPositionsMatrices(result_positions);
 
         // Clean up.
-        cuMemFree(deviceInputA);
-        cuMemFree(deviceInputB);
-        cuMemFree(deviceOutput);
+        cuMemFree(device_linear_adjacency_matrix);
+        cuMemFree(device_x_positions);
+        cuMemFree(device_y_positions);
+        cuMemFree(device_result_positions);
+    }
+    
+    public void printXYPositionsMatrices(float[] results) {
+        int n = (int) Math.sqrt(this.positions_n);
+        System.out.println("\n resulting positions: ");
+        for (int i = 0; i < n; i++){
+		for (int j = 0; j < n; j++){
+			System.out.print("\t" + results[i*n+j]);
+		}
+		System.out.println("\n");
+	}
+        System.out.println("\n");
     }
 }
 

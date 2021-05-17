@@ -14,41 +14,59 @@
 
 .visible .entry add(
 	.param .u32 add_param_0,
-	.param .u64 add_param_1,
+	.param .u32 add_param_1,
 	.param .u64 add_param_2,
-	.param .u64 add_param_3
+	.param .u64 add_param_3,
+	.param .u64 add_param_4,
+	.param .u64 add_param_5
 )
 {
-	.reg .pred 	%p<2>;
-	.reg .f32 	%f<4>;
-	.reg .b32 	%r<6>;
-	.reg .b64 	%rd<11>;
+	.reg .pred 	%p<3>;
+	.reg .f32 	%f<5>;
+	.reg .b32 	%r<14>;
+	.reg .b64 	%rd<15>;
 
 
-	ld.param.u32 	%r2, [add_param_0];
-	ld.param.u64 	%rd1, [add_param_1];
-	ld.param.u64 	%rd2, [add_param_2];
-	ld.param.u64 	%rd3, [add_param_3];
-	mov.u32 	%r3, %ctaid.x;
-	mov.u32 	%r4, %ntid.x;
-	mov.u32 	%r5, %tid.x;
-	mad.lo.s32 	%r1, %r4, %r3, %r5;
-	setp.ge.s32	%p1, %r1, %r2;
-	@%p1 bra 	BB0_2;
+	ld.param.u32 	%r7, [add_param_0];
+	ld.param.u32 	%r8, [add_param_1];
+	ld.param.u64 	%rd5, [add_param_2];
+	ld.param.u64 	%rd6, [add_param_3];
+	ld.param.u64 	%rd7, [add_param_4];
+	ld.param.u64 	%rd8, [add_param_5];
+	mov.u32 	%r1, %ntid.x;
+	mov.u32 	%r9, %ctaid.x;
+	mov.u32 	%r2, %tid.x;
+	mad.lo.s32 	%r13, %r1, %r9, %r2;
+	setp.ge.s32	%p1, %r13, %r8;
+	@%p1 bra 	BB0_3;
 
-	cvta.to.global.u64 	%rd4, %rd1;
-	mul.wide.s32 	%rd5, %r1, 4;
-	add.s64 	%rd6, %rd4, %rd5;
-	cvta.to.global.u64 	%rd7, %rd2;
-	add.s64 	%rd8, %rd7, %rd5;
-	ld.global.f32 	%f1, [%rd8];
-	ld.global.f32 	%f2, [%rd6];
-	add.f32 	%f3, %f2, %f1;
-	cvta.to.global.u64 	%rd9, %rd3;
-	add.s64 	%rd10, %rd9, %rd5;
-	st.global.f32 	[%rd10], %f3;
+	cvta.to.global.u64 	%rd9, %rd5;
+	mul.lo.s32 	%r10, %r2, %r7;
+	mul.wide.u32 	%rd10, %r10, 4;
+	add.s64 	%rd1, %rd9, %rd10;
+	mov.u32 	%r11, %nctaid.x;
+	mul.lo.s32 	%r4, %r11, %r1;
+	cvta.to.global.u64 	%rd2, %rd6;
+	cvta.to.global.u64 	%rd3, %rd7;
+	cvta.to.global.u64 	%rd4, %rd8;
 
 BB0_2:
+	mul.wide.s32 	%rd11, %r13, 4;
+	add.s64 	%rd12, %rd2, %rd11;
+	add.s64 	%rd13, %rd3, %rd11;
+	ld.global.f32 	%f1, [%rd13];
+	ld.global.f32 	%f2, [%rd12];
+	add.f32 	%f3, %f2, %f1;
+	add.s64 	%rd14, %rd4, %rd11;
+	st.global.f32 	[%rd14], %f3;
+	ld.global.u32 	%r12, [%rd1];
+	cvt.rn.f32.s32	%f4, %r12;
+	st.global.f32 	[%rd14], %f4;
+	add.s32 	%r13, %r4, %r13;
+	setp.lt.s32	%p2, %r13, %r8;
+	@%p2 bra 	BB0_2;
+
+BB0_3:
 	ret;
 }
 
