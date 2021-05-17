@@ -40,7 +40,6 @@ public class Graph {
         this.vertices_ids = new HashMap<String, Integer>();
         this.edges = new ArrayList<Edge>();
         
-        
         Object json_vertices = graph_json.get("vertices");
         this.vertices_list = JSONUtils.objectToJSONObjectArrayList(json_vertices);
         

@@ -1,7 +1,7 @@
 /*
  *
  */
-package com.kurve.kurve2d;
+package com.kurve.kurve2d.jcuda_examples;
 
 import static jcuda.driver.JCudaDriver.cuCtxCreate;
 import static jcuda.driver.JCudaDriver.cuCtxSynchronize;
