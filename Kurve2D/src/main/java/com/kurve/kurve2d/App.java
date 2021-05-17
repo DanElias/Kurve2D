@@ -15,7 +15,8 @@ import org.json.simple.parser.JSONParser;
 
 import utils.JSONUtils;
 
-import com.kurve.kurve2d.Graph;
+import com.kurve.kurve2d.AdjacencyListGraph.ListGraph;
+import com.kurve.kurve2d.AdjacencyMatrixGraph.MatrixGraph;
 
 /**
  * App initialization, entry point
@@ -25,13 +26,23 @@ public class App {
     private JCudaSpringForceCalculator jcuda_calculator;
     private String graph_json_url;
     private JSONObject graph_json_object;
-    private Graph graph;
+    private ListGraph list_graph;
+    private MatrixGraph matrix_graph;
     
     public App(String json_url)throws IOException{
         this.graph_json_url = json_url;
         this.graph_json_object = JSONUtils.readJson(this.graph_json_url);
-        this.jcuda_calculator = new JCudaSpringForceCalculator("", 1024);
-        this.graph = new Graph(this.graph_json_object);
+        this.list_graph = new ListGraph(this.graph_json_object);
+        this.matrix_graph = new MatrixGraph(this.graph_json_object);
+        
+        this.jcuda_calculator = new JCudaSpringForceCalculator(
+                "", // ptx filename url
+                this.matrix_graph.getN(), // num of vertices * num of vertices
+                this.list_graph.getN(), // n * n = size of x/y positions matrix
+                this.matrix_graph.getAdjacencyMatrix(), // adjacency matrix graph
+                this.list_graph.getXPositionsMatrix(),
+                this.list_graph.getYPositionsMatrix()
+        );
     }
     
     public void start(){

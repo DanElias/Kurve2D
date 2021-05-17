@@ -1,4 +1,4 @@
-package com.kurve.kurve2d;
+package com.kurve.kurve2d.AdjacencyListGraph;
 
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -15,26 +15,26 @@ import java.lang.Math;
 import java.util.HashSet;
 import utils.JSONUtils;
 
-import com.kurve.kurve2d.Vertex;
-import com.kurve.kurve2d.Edge;
+import com.kurve.kurve2d.AdjacencyListGraph.Vertex;
+import com.kurve.kurve2d.AdjacencyListGraph.Edge;
 
 /**
  *
  * @author DanElias
  */
-public class Graph {
+public class ListGraph {
     private HashMap<Integer, ArrayList<Integer>> vertices_mapping; // Matrix mapping
     private HashMap<Integer, Vertex> vertices; // Actual vertex objects
     private HashMap<String, Integer> vertices_ids; // Original id - mat index mapping
     private ArrayList<Edge> edges;
     private int N; // CUDA problem size
     private int n; // number of vertices
-    private float[][] x_positions_matrix;
-    private float[][] y_positions_matrix;
+    public float[][] x_positions_matrix;
+    public float[][] y_positions_matrix;
     private List<JSONObject> vertices_list; // Json vertices
     private List<JSONObject> edges_list; // Json edges
     
-    public Graph(JSONObject graph_json){
+    public ListGraph(JSONObject graph_json){
         this.vertices_mapping = new HashMap<Integer, ArrayList<Integer>>();
         this.vertices = new HashMap<Integer, Vertex>();
         this.vertices_ids = new HashMap<String, Integer>();
@@ -144,4 +144,19 @@ public class Graph {
         return n * n;
     }
     
+    public int getN(){
+        return this.N;
+    }
+    
+    public int getn(){
+        return this.n;
+    }
+    
+    public float[][] getXPositionsMatrix() {
+        return this.x_positions_matrix;
+    }
+    
+    public float[][] getYPositionsMatrix() {
+        return this.x_positions_matrix;
+    }
 }

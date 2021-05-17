@@ -27,6 +27,8 @@ import jcuda.driver.CUmodule;
 import jcuda.driver.JCudaDriver;
 import utils.JCudaSamplesUtils;
 
+import com.kurve.kurve2d.AdjacencyMatrixGraph.MatrixGraph;
+
 /**
  */
 public class JCudaSpringForceCalculator {
@@ -37,6 +39,7 @@ public class JCudaSpringForceCalculator {
     private CUfunction function;
     private int N;
     private int size_bytes;
+    private MatrixGraph graph;
     
     /**
      * Entry point
@@ -44,7 +47,14 @@ public class JCudaSpringForceCalculator {
      * @param N size of the problem
      * @throws IOException If an IO error occurs
      */
-    public JCudaSpringForceCalculator(String ptxFileName, int N) throws IOException {
+    public JCudaSpringForceCalculator(
+            String ptxFileName, // ptx filename url
+            int N, // num of vertices * num of vertices
+            int posN, // n * n = size of x/y positions matrix
+            int[][] adjacency_matrix, // adjacency matrix graph
+            float[][] x_positions_matrix,
+            float[][] y_positions_matrix) throws IOException {
+        
         // Enable exceptions and omit all subsequent error checks
         JCudaDriver.setExceptionsEnabled(true);
         
@@ -76,6 +86,7 @@ public class JCudaSpringForceCalculator {
         // Initialize problem size N
         this.N = N;
         this.size_bytes = this.N * Sizeof.FLOAT;
+        this.graph = graph;
     }
     
     public void calculate(){
