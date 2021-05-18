@@ -194,8 +194,36 @@ public class JCudaSpringForceCalculator {
             device_result_positions,
             this.size_bytes);
         
+        // Copy the device output to the host.
+        cuMemcpyDtoH(
+            Pointer.to(x_positions),
+            device_x_positions,
+            this.size_bytes);
+        
+        // Copy the device output to the host.
+        cuMemcpyDtoH(
+            Pointer.to(y_positions),
+            device_y_positions,
+            this.size_bytes);
+        
+        // Copy the device output to the host.
+        cuMemcpyDtoH(
+            Pointer.to(x_velocities),
+            device_x_velocities,
+            this.size_bytes);
+        
+        // Copy the device output to the host.
+        cuMemcpyDtoH(
+            Pointer.to(y_velocities),
+            device_y_velocities,
+            this.size_bytes);
+        
+        
         // Verify the result
-        printXYPositionsMatrices(result_positions);
+        printXYPositionsMatrices(x_positions);
+        printXYPositionsMatrices(y_positions);
+        printXYPositionsMatrices(x_velocities);
+        printXYPositionsMatrices(y_velocities);
 
         // Clean up.
         cuMemFree(device_linear_adjacency_matrix);
@@ -206,7 +234,7 @@ public class JCudaSpringForceCalculator {
     
     public void printXYPositionsMatrices(float[] results) {
         int n = (int) Math.sqrt(this.positions_n);
-        System.out.println("\n resulting positions: ");
+        System.out.println("\n results: ");
         for (int i = 0; i < n; i++){
 		for (int j = 0; j < n; j++){
 			System.out.print("\t" + results[i*n+j]);

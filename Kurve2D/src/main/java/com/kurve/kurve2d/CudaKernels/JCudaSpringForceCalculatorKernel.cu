@@ -17,6 +17,10 @@ __global__ void add(int vertices, int positions_n, int *linear_adjacency_matrix,
         int vertex_row = id * vertices; // index where the row starts for the vertex in the adj matrix
         float x = x_positions[id];
         float y = y_positions[id];
+        float x_velocity = x_velocities[id];
+        float y_velocity = y_velocities[id];
+        float new_x_velocity = 0;
+        float new_y_velocity = 0;
 
         for(pos_index = 0; pos_index < vertices; pos_index++) {
             //Don't calculate forces with itself
@@ -53,9 +57,16 @@ __global__ void add(int vertices, int positions_n, int *linear_adjacency_matrix,
             float velocity_x = separation_x * force / distance * C4;
             float velocity_y = separation_y * force / distance * C4;
             
-            result_positions[id] = velocity_x + velocity_y;
+            // Acum velocities
             
+            new_x_velocity = new_x_velocity + velocity_x;
+            new_y_velocity = new_y_velocity + velocity_y;
         }
+        
+        x_velocities[id] = x_velocities[id] + new_x_velocity;
+        y_velocities[id] = y_velocities[id] + new_y_velocity;
+        x_positions[id] = x_positions[id] + x_velocities[id];
+        y_positions[id] = y_positions[id] + y_velocities[id];
 
         id =  id + blockDim.x * gridDim.x; // id + 512 * numBlocks    
     }
