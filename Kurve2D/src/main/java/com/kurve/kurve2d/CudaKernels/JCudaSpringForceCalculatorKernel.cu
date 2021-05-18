@@ -63,6 +63,9 @@ __global__ void add(int vertices, int positions_n, int *linear_adjacency_matrix,
             new_y_velocity = new_y_velocity + velocity_y;
         }
         
+        //synchronize all threads, measure speed between sequential and parallel
+        __syncthreads();
+        
         x_velocities[id] = x_velocities[id] + new_x_velocity;
         y_velocities[id] = y_velocities[id] + new_y_velocity;
         x_positions[id] = x_positions[id] + x_velocities[id];
