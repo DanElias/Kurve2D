@@ -107,7 +107,11 @@ public class JCudaSpringForceCalculator {
         this.GRID_SIZE = (int) Math.ceil((double)this.positions_n / this.THREADS_PER_BLOCK); //gridSizeX
     }
     
-    public void calculate(){  
+    public void calculate(){
+        printXYPositionsMatrices(x_positions,"X positions before");
+        printXYPositionsMatrices(y_positions,"Y positions before");
+        printXYPositionsMatrices(x_velocities,"X velocities before");
+        printXYPositionsMatrices(y_velocities,"Y velocities before");
         //*** Host variables **//
         float result_positions[] = new float[this.positions_n];
         
@@ -220,10 +224,10 @@ public class JCudaSpringForceCalculator {
         
         
         // Verify the result
-        printXYPositionsMatrices(x_positions);
-        printXYPositionsMatrices(y_positions);
-        printXYPositionsMatrices(x_velocities);
-        printXYPositionsMatrices(y_velocities);
+        printXYPositionsMatrices(x_positions,"X positions after");
+        printXYPositionsMatrices(y_positions,"Y positions after");
+        printXYPositionsMatrices(x_velocities,"X velocities after");
+        printXYPositionsMatrices(y_velocities,"Y velocities after");
 
         // Clean up.
         cuMemFree(device_linear_adjacency_matrix);
@@ -232,9 +236,9 @@ public class JCudaSpringForceCalculator {
         cuMemFree(device_result_positions);
     }
     
-    public void printXYPositionsMatrices(float[] results) {
+    public void printXYPositionsMatrices(float[] results, String text) {
         int n = (int) Math.sqrt(this.positions_n);
-        System.out.println("\n results: ");
+        System.out.println("\n results " + text + ": ");
         for (int i = 0; i < n; i++){
 		for (int j = 0; j < n; j++){
 			System.out.print("\t" + results[i*n+j]);
