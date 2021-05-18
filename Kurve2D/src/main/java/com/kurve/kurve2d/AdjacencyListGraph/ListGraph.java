@@ -29,6 +29,8 @@ public class ListGraph {
     private ArrayList<Edge> edges;
     private int N; // CUDA problem size
     private int n; // number of vertices
+    public float[] x_velocities;
+    public float[] y_velocities;
     public float[] x_positions;
     public float[] y_positions;
     private List<JSONObject> vertices_list; // Json vertices
@@ -50,11 +52,14 @@ public class ListGraph {
         
         this.x_positions = new float[this.N];
         this.y_positions = new float[this.N];
+        this.x_velocities = new float[this.N];
+        this.y_velocities = new float[this.N];
         
         setVertices();
         setEdges();
         setNonAdjacentLists();
-        setXYPositionsMatricesInitialPositions();
+        setXYInitialPositionsMatrices();
+        setXYInitialVelocitiesMatrices();
         //printGraph();
         printXYPositionsMatrices();
     }
@@ -105,13 +110,23 @@ public class ListGraph {
         }
     }
     
-    public void setXYPositionsMatricesInitialPositions() {
+    public void setXYInitialPositionsMatrices() {
         for (int i = 0; i < this.N; i++){
-            this.x_positions[i] = (float) 1;
+            this.x_positions[i] = (float) i;
 	}
         
         for (int i = 0; i < this.N; i++){
-            this.y_positions[i] = (float) 1;
+            this.y_positions[i] = (float) this.N - i;
+	}
+    }
+    
+    public void setXYInitialVelocitiesMatrices() {
+        for (int i = 0; i < this.N; i++){
+            this.x_velocities[i] = 0;
+	}
+        
+        for (int i = 0; i < this.N; i++){
+            this.y_velocities[i] = 0;
 	}
     }
     
@@ -148,11 +163,19 @@ public class ListGraph {
         return this.n;
     }
     
-    public float[] getXPositionsMatrix() {
+    public float[] getXPositions() {
         return this.x_positions;
     }
     
-    public float[] getYPositionsMatrix() {
+    public float[] getYPositions() {
         return this.y_positions;
+    }
+    
+    public float[] getXVelocities() {
+        return this.x_velocities;
+    }
+    
+    public float[] getYVelocities() {
+        return this.y_velocities;
     }
 }

@@ -40,8 +40,10 @@ public class App {
                 this.matrix_graph.getNumberOfVertices(), // num of vertices * num of vertices
                 this.list_graph.getN(), // n * n = size of x/y positions matrix
                 this.matrix_graph.getLinearAdjacencyMatrix(), // adjacency matrix graph
-                this.list_graph.getXPositionsMatrix(),
-                this.list_graph.getYPositionsMatrix()
+                this.list_graph.getXPositions(),
+                this.list_graph.getYPositions(),
+                this.list_graph.getXVelocities(),
+                this.list_graph.getYVelocities()
         );
     }
     
