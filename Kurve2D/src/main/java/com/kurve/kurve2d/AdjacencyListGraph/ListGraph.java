@@ -112,11 +112,11 @@ public class ListGraph {
     
     public void setXYInitialPositionsMatrices() {
         for (int i = 0; i < this.N; i++){
-            this.x_positions[i] = (float) i;
+            this.x_positions[i] = (float) i + i * 94;
 	}
         
         for (int i = 0; i < this.N; i++){
-            this.y_positions[i] = (float) this.N - i;
+            this.y_positions[i] = (float) this.N - i + i * 36;
 	}
     }
     

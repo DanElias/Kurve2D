@@ -17,12 +17,17 @@ import utils.JSONUtils;
 
 import com.kurve.kurve2d.AdjacencyListGraph.ListGraph;
 import com.kurve.kurve2d.AdjacencyMatrixGraph.MatrixGraph;
+import com.kurve.kurve2d.GUI.Frame;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 
 /**
  * App initialization, entry point
  * @author DanElias
  */
 public class App {
+    private Frame frame;
+    
     private JCudaSpringForceCalculator jcuda_calculator;
     private String graph_json_url;
     private JSONObject graph_json_object;
@@ -45,6 +50,8 @@ public class App {
                 this.list_graph.getXVelocities(),
                 this.list_graph.getYVelocities()
         );
+        
+        //initializeGUI();
     }
     
     public void start(){
@@ -54,13 +61,17 @@ public class App {
         this.jcuda_calculator.calculate();
     }
     
+    
+    public void initializeGUI() throws IOException {
+        // Set the GUI
+        this.frame = new Frame(this.list_graph, this.matrix_graph);
+        ImageIcon logo = new ImageIcon("src/main/java/com/kurve/kurve2d/GUI/assets/images/logo.png");
+        this.frame.setIconImage(logo.getImage());
+        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.frame.setVisible(true);
+    }
+    
     public static void main(String args[]) throws IOException{
-        /*
-        Pointer pointer = new Pointer();
-        JCuda.cudaMalloc(pointer, 4);
-        System.out.println("Pointer: "+pointer);
-        JCuda.cudaFree(pointer);
-        */
         String url = "src/main/java/com/kurve/kurve2d/data_examples/example.json";
         App app = new App(url);
         app.start();

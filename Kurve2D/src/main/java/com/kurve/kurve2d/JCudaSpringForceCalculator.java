@@ -49,6 +49,14 @@ public class JCudaSpringForceCalculator {
     private final int THREADS_PER_BLOCK = 512; //threads per block blockSizeX 256
     private int GRID_SIZE; //gridSizeX
     
+    private CUdeviceptr device_linear_adjacency_matrix;
+    private CUdeviceptr device_x_positions;
+    private CUdeviceptr device_y_positions;
+    private CUdeviceptr device_x_velocities;
+    private CUdeviceptr device_y_velocities;
+    private CUdeviceptr device_result_positions;
+    float result_positions[];
+    
     /**
      * Entry point
      * @param ptxFileName compiled ptx filename if already exists
@@ -105,65 +113,67 @@ public class JCudaSpringForceCalculator {
         this.y_velocities = y_velocities;
         
         this.GRID_SIZE = (int) Math.ceil((double)this.positions_n / this.THREADS_PER_BLOCK); //gridSizeX
-    }
-    
-    public void calculate(){
-        printXYPositionsMatrices(x_positions,"X positions before");
-        printXYPositionsMatrices(y_positions,"Y positions before");
-        printXYPositionsMatrices(x_velocities,"X velocities before");
-        printXYPositionsMatrices(y_velocities,"Y velocities before");
+        
         //*** Host variables **//
-        float result_positions[] = new float[this.positions_n];
+        this.result_positions = new float[this.positions_n];
         
         //*** Device variables **//
         // Allocate Device Linear Adjacency Matrix
-        CUdeviceptr device_linear_adjacency_matrix = new CUdeviceptr();
-        cuMemAlloc(device_linear_adjacency_matrix, this.size_bytes_linear_adjacency_matrix);
+        this.device_linear_adjacency_matrix = new CUdeviceptr();
+        cuMemAlloc(this.device_linear_adjacency_matrix, this.size_bytes_linear_adjacency_matrix);
         
         // Allocate Device X positions
-        CUdeviceptr device_x_positions = new CUdeviceptr();// ptr to device variable
-        cuMemAlloc(device_x_positions, this.size_bytes); // cudaMalloc
+        this.device_x_positions = new CUdeviceptr();// ptr to device variable
+        cuMemAlloc(this.device_x_positions, this.size_bytes); // cudaMalloc
         
         // Allocate Device Y positions
-        CUdeviceptr device_y_positions = new CUdeviceptr(); 
-        cuMemAlloc(device_y_positions, this.size_bytes);
+        this.device_y_positions = new CUdeviceptr(); 
+        cuMemAlloc(this.device_y_positions, this.size_bytes);
         
         // Allocate Device X velocities
-        CUdeviceptr device_x_velocities = new CUdeviceptr();
-        cuMemAlloc(device_x_velocities, this.size_bytes);
+        this.device_x_velocities = new CUdeviceptr();
+        cuMemAlloc(this.device_x_velocities, this.size_bytes);
         
         // Allocate Device Y velocities
-        CUdeviceptr device_y_velocities = new CUdeviceptr(); 
-        cuMemAlloc(device_y_velocities, this.size_bytes);
+        this.device_y_velocities = new CUdeviceptr(); 
+        cuMemAlloc(this.device_y_velocities, this.size_bytes);
         
         // Allocate device output memory
-        CUdeviceptr device_result_positions = new CUdeviceptr();
-        cuMemAlloc(device_result_positions, this.size_bytes);
+        this.device_result_positions = new CUdeviceptr();
+        cuMemAlloc(this.device_result_positions, this.size_bytes);
+    }
+    
+    public void calculate(){
+        printXYPositionsMatrices(this.x_positions,"X positions before");
+        printXYPositionsMatrices(this.y_positions,"Y positions before");
+        printXYPositionsMatrices(this.x_velocities,"X velocities before");
+        printXYPositionsMatrices(this.y_velocities,"Y velocities before");
+        
 
         //*** Cuda Memcpy Host to Device **//
         // Copy the host input data to the device variables
         cuMemcpyHtoD( //cudaMemcpy HostToDevice
-            device_linear_adjacency_matrix, 
+            this.device_linear_adjacency_matrix, 
             Pointer.to(this.linear_adjacency_matrix), 
             this.size_bytes_linear_adjacency_matrix);
         
         cuMemcpyHtoD( //cudaMemcpy HostToDevice
-            device_x_positions, 
+            this.device_x_positions, 
             Pointer.to(this.x_positions), 
             this.size_bytes);
        
         cuMemcpyHtoD( //cudaMemcpy HostToDevice
-            device_y_positions,
+            this.device_y_positions,
             Pointer.to(this.y_positions),
             this.size_bytes);
         
         cuMemcpyHtoD( //cudaMemcpy HostToDevice
-            device_x_velocities, 
+            this.device_x_velocities, 
             Pointer.to(this.x_velocities), 
             this.size_bytes);
        
         cuMemcpyHtoD( //cudaMemcpy HostToDevice
-            device_y_velocities,
+            this.device_y_velocities,
             Pointer.to(this.y_velocities),
             this.size_bytes);
         
@@ -172,12 +182,12 @@ public class JCudaSpringForceCalculator {
         // params to be sent to kernel __global_
             Pointer.to(new int[]{this.N}), // number of vertices
             Pointer.to(new int[]{this.positions_n}), // size n * n of positions matrices
-            Pointer.to(device_linear_adjacency_matrix),
-            Pointer.to(device_x_positions),
-            Pointer.to(device_y_positions),
-            Pointer.to(device_x_velocities),
-            Pointer.to(device_y_velocities),
-            Pointer.to(device_result_positions)
+            Pointer.to(this.device_linear_adjacency_matrix),
+            Pointer.to(this.device_x_positions),
+            Pointer.to(this.device_y_positions),
+            Pointer.to(this.device_x_velocities),
+            Pointer.to(this.device_y_velocities),
+            Pointer.to(this.device_result_positions)
         );
         
         //*** Kernel Call **// 
@@ -194,46 +204,46 @@ public class JCudaSpringForceCalculator {
 
         // Copy the device output to the host.
         cuMemcpyDtoH(
-            Pointer.to(result_positions),
-            device_result_positions,
+            Pointer.to(this.result_positions),
+            this.device_result_positions,
             this.size_bytes);
         
         // Copy the device output to the host.
         cuMemcpyDtoH(
-            Pointer.to(x_positions),
-            device_x_positions,
+            Pointer.to(this.x_positions),
+            this.device_x_positions,
             this.size_bytes);
         
         // Copy the device output to the host.
         cuMemcpyDtoH(
-            Pointer.to(y_positions),
-            device_y_positions,
+            Pointer.to(this.y_positions),
+            this.device_y_positions,
             this.size_bytes);
         
         // Copy the device output to the host.
         cuMemcpyDtoH(
-            Pointer.to(x_velocities),
-            device_x_velocities,
+            Pointer.to(this.x_velocities),
+            this.device_x_velocities,
             this.size_bytes);
         
         // Copy the device output to the host.
         cuMemcpyDtoH(
-            Pointer.to(y_velocities),
-            device_y_velocities,
+            Pointer.to(this.y_velocities),
+            this.device_y_velocities,
             this.size_bytes);
         
         
         // Verify the result
-        printXYPositionsMatrices(x_positions,"X positions after");
-        printXYPositionsMatrices(y_positions,"Y positions after");
-        printXYPositionsMatrices(x_velocities,"X velocities after");
-        printXYPositionsMatrices(y_velocities,"Y velocities after");
+        printXYPositionsMatrices(this.x_positions,"X positions after");
+        printXYPositionsMatrices(this.y_positions,"Y positions after");
+        printXYPositionsMatrices(this.x_velocities,"X velocities after");
+        printXYPositionsMatrices(this.y_velocities,"Y velocities after");
 
         // Clean up.
-        cuMemFree(device_linear_adjacency_matrix);
-        cuMemFree(device_x_positions);
-        cuMemFree(device_y_positions);
-        cuMemFree(device_result_positions);
+        cuMemFree(this.device_linear_adjacency_matrix);
+        cuMemFree(this.device_x_positions);
+        cuMemFree(this.device_y_positions);
+        cuMemFree(this.device_result_positions);
     }
     
     public void printXYPositionsMatrices(float[] results, String text) {
