@@ -20,8 +20,8 @@ public class VertexComponent {
     public VertexComponent(float x, float y) {
         this.x = x;
         this.y = y;
-        this.WIDTH = 10;
-        this.HEIGHT = 10;
+        this.WIDTH = 7;
+        this.HEIGHT = 7;
     }
     
     public void setX(float x) {

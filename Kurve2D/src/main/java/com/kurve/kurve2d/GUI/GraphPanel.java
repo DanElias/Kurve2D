@@ -59,11 +59,10 @@ public class GraphPanel extends JPanel{
     }
     
     public void update(Graphics2D g2) {
-        System.out.println("UPDATE");
         for (int i = 0; i < this.matrix_graph.getNumberOfVertices(); i++){
             VertexComponent vertex = this.vertexComponents.get(i);
             vertex.setX(this.list_graph.getXPositions()[i]);
-            vertex.setY(this.list_graph.getXPositions()[i]);
+            vertex.setY(this.list_graph.getYPositions()[i]);
             g2.fill(this.vertexComponents.get(i).getCircle());
         }
     }

@@ -39,26 +39,15 @@ public class App {
         this.graph_json_object = JSONUtils.readJson(this.graph_json_url);
         this.list_graph = new ListGraph(this.graph_json_object);
         this.matrix_graph = new MatrixGraph(this.graph_json_object);
-        
-        this.jcuda_calculator = new JCudaSpringForceCalculator(
-                "", // ptx filename url
-                this.matrix_graph.getNumberOfVertices(), // num of vertices * num of vertices
-                this.list_graph.getN(), // n * n = size of x/y positions matrix
-                this.matrix_graph.getLinearAdjacencyMatrix(), // adjacency matrix graph
-                this.list_graph.getXPositions(),
-                this.list_graph.getYPositions(),
-                this.list_graph.getXVelocities(),
-                this.list_graph.getYVelocities()
-        );
-        
-        //initializeGUI();
+        initializeGUI();
     }
     
     public void start(){
         System.out.println("Now Calculating...");
         //JSONUtils.printJsonObject(this.graph_json_object, "vertices");
         //JSONUtils.printJsonObject(this.graph_json_object, "edges");
-        this.jcuda_calculator.calculate();
+        //this.jcuda_calculator.calculate();
+        //this.jcuda_calculator.free();
     }
     
     
@@ -72,7 +61,7 @@ public class App {
     }
     
     public static void main(String args[]) throws IOException{
-        String url = "src/main/java/com/kurve/kurve2d/data_examples/example.json";
+        String url = "src/main/java/com/kurve/kurve2d/data_examples/miserables.json";
         App app = new App(url);
         app.start();
         System.out.println("Finished");

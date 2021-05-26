@@ -49,14 +49,23 @@ public class MatrixGraph {
         
         setVertices();
         setEdges();
-        printAdjacencyMatrix();
-        printLinearAdjacencyMatrix();
+        //printAdjacencyMatrix();
+        //printLinearAdjacencyMatrix();
     }
     
     private void setVertices() {
         int index = 0;
         for (JSONObject vertex : this.vertices_list){
-            String vertex_id = vertex.get("id").toString();
+            String vertex_id = "";
+            
+            if (vertex.get("id") != null) {
+                vertex_id = vertex.get("id").toString();
+            } else {
+                if (vertex.get("name") != null) {
+                    vertex_id = vertex.get("name").toString();
+                }
+            }
+       
             this.vertices_ids.put(vertex_id, index);
             index++;
         }

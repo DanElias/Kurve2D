@@ -58,17 +58,27 @@ public class ListGraph {
         setVertices();
         setEdges();
         setNonAdjacentLists();
-        setXYInitialPositionsMatrices();
-        setXYInitialVelocitiesMatrices();
+        createPolygonCoordinates((float) 200);
+        //setXYInitialPositionsMatrices();
+        //setXYInitialVelocitiesMatrices();
         //printGraph();
-        printXYPositionsMatrices();
+        // printXYPositionsMatrices();
     }
     
     private void setVertices() {
-        int index = 0;
+        Integer index = 0;
         for (JSONObject vertex : this.vertices_list){
-            String vertex_id = vertex.get("id").toString();
-            String vertex_value = vertex.get("value").toString();
+            String vertex_id = "";
+            
+            if (vertex.get("id") != null) {
+                vertex_id = vertex.get("id").toString();
+            } else {
+                if (vertex.get("name") != null) {
+                    vertex_id = vertex.get("name").toString();
+                }
+            }
+            
+            String vertex_value = (vertex.get("value") != null) ? vertex.get("value").toString() : vertex_id;
             Vertex new_vertex = new Vertex(index, vertex_id, vertex_value);
             this.vertices.put(index, new_vertex);
             this.vertices_ids.put(vertex_id, index);
@@ -109,6 +119,22 @@ public class ListGraph {
             System.out.println(vertex.getNonadjacentVertices());
         }
     }
+    
+    public void createPolygonCoordinates(float radius) {
+        float sides = this.vertices.size();
+        float fpi = (float) Math.PI;
+        float angle_per_side = (2 * fpi / sides);
+        float initial_angle = fpi / 2;
+        //(x,y,z) = ( r * cos(theta), r * sin(theta), 0)
+        for (int i = 0; i < sides; i++){
+            float angle = angle_per_side * i + initial_angle;
+            float x = (float) (Math.cos(angle) * radius);
+            float y = (float) (Math.sin(angle) * radius);
+            System.out.println();
+            this.x_positions[i] = x + 490;
+            this.y_positions[i] = y + 310;
+        }
+    } 
     
     public void setXYInitialPositionsMatrices() {
         for (int i = 0; i < this.N; i++){

@@ -28,6 +28,7 @@ import jcuda.driver.JCudaDriver;
 import utils.JCudaSamplesUtils;
 
 import com.kurve.kurve2d.AdjacencyMatrixGraph.MatrixGraph;
+import static jcuda.driver.JCudaDriver.cuCtxSetCurrent;
 
 /**
  */
@@ -144,11 +145,14 @@ public class JCudaSpringForceCalculator {
     }
     
     public void calculate(){
+        cuCtxSetCurrent(this.context);
+        
+        /*
         printXYPositionsMatrices(this.x_positions,"X positions before");
         printXYPositionsMatrices(this.y_positions,"Y positions before");
         printXYPositionsMatrices(this.x_velocities,"X velocities before");
         printXYPositionsMatrices(this.y_velocities,"Y velocities before");
-        
+        */
 
         //*** Cuda Memcpy Host to Device **//
         // Copy the host input data to the device variables
@@ -234,11 +238,15 @@ public class JCudaSpringForceCalculator {
         
         
         // Verify the result
+        /*
         printXYPositionsMatrices(this.x_positions,"X positions after");
         printXYPositionsMatrices(this.y_positions,"Y positions after");
         printXYPositionsMatrices(this.x_velocities,"X velocities after");
         printXYPositionsMatrices(this.y_velocities,"Y velocities after");
-
+        */
+    }
+    
+    public void free() {
         // Clean up.
         cuMemFree(this.device_linear_adjacency_matrix);
         cuMemFree(this.device_x_positions);
