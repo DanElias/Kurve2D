@@ -1,0 +1,90 @@
+{
+    "vertices": [
+        {
+            "id": "A",
+            "value": "A"
+        },
+        {
+            "id": "B",
+            "value": "B"
+        },
+        {
+            "id": "C",
+            "value": "C"
+        },
+        {
+            "id": "D",
+            "value": "D"
+        },
+        {
+            "id": "E",
+            "value": "E"
+        },
+        {
+            "id": "F",
+            "value": "F"
+        },
+        {
+            "id": "G",
+            "value": "G"
+        }
+    ],
+    "edges": [
+        {
+            "source": "A",
+            "target": "B"
+        },
+        {
+            "source": "A",
+            "target": "C"
+        },
+        {
+            "source": "A",
+            "target": "D"
+        },
+        {
+            "source": "B",
+            "target": "A"
+        },
+        {
+            "source": "B",
+            "target": "D"
+        },
+        {
+            "source": "C",
+            "target": "A"
+        },
+        {
+            "source": "D",
+            "target": "A"
+        },
+        {
+            "source": "D",
+            "target": "B"
+        },
+        {
+            "source": "D",
+            "target": "F"
+        },
+        {
+            "source": "E",
+            "target": "F"
+        },
+        {
+            "source": "E",
+            "target": "G"
+        },
+        {
+            "source": "F",
+            "target": "D"
+        },
+        {
+            "source": "F",
+            "target": "E"
+        },
+        {
+            "source": "G",
+            "target": "E"
+        }
+    ]
+}
