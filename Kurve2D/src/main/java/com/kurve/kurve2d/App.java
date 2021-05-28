@@ -61,7 +61,7 @@ public class App {
     }
     
     public static void main(String args[]) throws IOException{
-        String url = "src/main/java/com/kurve/kurve2d/data_examples/miserables.json";
+        String url = "src/main/java/com/kurve/kurve2d/data_examples/blocks.json";
         App app = new App(url);
         app.start();
         System.out.println("Finished");

@@ -23,8 +23,8 @@ public class GUIThread extends Thread{
     private static final int NO_DELAYS_PER_YIELD = 16;
     /* Number of frames with a delay of 0 ms before the
     animation thread yields to other running threads. */
-    private static int MAX_FRAME_SKIPS = 5;
-    private static int M = 100000;
+    private static int MAX_FRAME_SKIPS = 1;
+    private static int M = 10000;
     
     public GUIThread(GraphPanel graph_panel, ListGraph list_graph, MatrixGraph matrix_graph) throws IOException{
         this.graph_panel = graph_panel;
@@ -65,6 +65,7 @@ public class GUIThread extends Thread{
         long excess = 0L;
         beforeTime = java.lang.System.nanoTime();
         
+        long startTime = System.nanoTime();
         while(t_minus_M < M) {
             t_minus_M++;
             updatePositions();
@@ -101,5 +102,9 @@ public class GUIThread extends Thread{
                 t_minus_M++;
             } //end of while2
         }
+        long endTime = System.nanoTime();
+        long timeElapsed = endTime - startTime;
+        System.out.println("Execution time in nanoseconds: " + timeElapsed);
+        System.out.println("Execution time in milliseconds: " + timeElapsed / 1000000);
     }
 }

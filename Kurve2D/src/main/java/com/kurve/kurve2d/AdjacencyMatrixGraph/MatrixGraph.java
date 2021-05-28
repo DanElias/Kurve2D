@@ -78,6 +78,7 @@ public class MatrixGraph {
             int source_vertex_id = this.vertices_ids.get(source);
             int target_vertex_id = this.vertices_ids.get(target);
             addEdge(source_vertex_id, target_vertex_id);
+            addEdge(target_vertex_id, source_vertex_id);
         }
     }
     

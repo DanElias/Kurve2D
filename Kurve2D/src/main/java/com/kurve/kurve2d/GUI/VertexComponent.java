@@ -14,14 +14,14 @@ import java.awt.geom.Ellipse2D;
 public class VertexComponent {
     private float x;
     private float y;
-    private int WIDTH;
-    private int HEIGHT;
+    private static final float RADIUS = (float) 3.5;
     
     public VertexComponent(float x, float y) {
         this.x = x;
-        this.y = y;
-        this.WIDTH = 7;
-        this.HEIGHT = 7;
+    }
+    
+    public static float getRadius() {
+        return RADIUS;
     }
     
     public void setX(float x) {
@@ -33,6 +33,6 @@ public class VertexComponent {
     }
     
     public Ellipse2D getCircle() {
-        return new Ellipse2D.Double(this.x, this.y, this.WIDTH, this.HEIGHT);
+        return new Ellipse2D.Double(this.x, this.y, this.RADIUS * 2, this.RADIUS * 2);
     }
 }

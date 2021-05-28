@@ -131,8 +131,8 @@ public class ListGraph {
             float x = (float) (Math.cos(angle) * radius);
             float y = (float) (Math.sin(angle) * radius);
             System.out.println();
-            this.x_positions[i] = x + 490;
-            this.y_positions[i] = y + 310;
+            this.x_positions[i] = x + 530;
+            this.y_positions[i] = y + 350;
         }
     } 
     
