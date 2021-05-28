@@ -58,7 +58,7 @@ public class ListGraph {
         setVertices();
         setEdges();
         setNonAdjacentLists();
-        createPolygonCoordinates((float) 200);
+        createPolygonCoordinates((float) 250);
         //setXYInitialPositionsMatrices();
         //setXYInitialVelocitiesMatrices();
         //printGraph();

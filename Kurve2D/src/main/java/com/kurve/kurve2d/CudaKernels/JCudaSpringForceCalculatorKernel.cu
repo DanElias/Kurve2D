@@ -12,8 +12,8 @@ __global__ void add(int vertices, int positions_n, int *linear_adjacency_matrix,
     float C2 = 1.0 / scale;
     float C3 = 1.0 / scale;
     float C4 = 0.1 / scale;
-    float max_velocity = 2;
-    float min_velocity = -2;
+    float max_velocity = 100;
+    float min_velocity = -100;
     
     while (id < positions_n){
         

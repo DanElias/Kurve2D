@@ -716,8 +716,8 @@ BB0_64:
 	add.s64 	%rd12, %rd59, %rd65;
 	ld.global.f32 	%f460, [%rd12];
 	add.f32 	%f420, %f441, %f460;
-	setp.geu.f32	%p50, %f420, 0f40000000;
-	setp.leu.f32	%p51, %f420, 0fC0000000;
+	setp.geu.f32	%p50, %f420, 0f42C80000;
+	setp.leu.f32	%p51, %f420, 0fC2C80000;
 	or.pred  	%p52, %p50, %p51;
 	@%p52 bra 	BB0_66;
 
@@ -739,8 +739,8 @@ BB0_68:
 	add.s64 	%rd13, %rd61, %rd66;
 	ld.global.f32 	%f461, [%rd13];
 	add.f32 	%f422, %f440, %f461;
-	setp.geu.f32	%p56, %f422, 0f40000000;
-	setp.leu.f32	%p57, %f422, 0fC0000000;
+	setp.geu.f32	%p56, %f422, 0f42C80000;
+	setp.leu.f32	%p57, %f422, 0fC2C80000;
 	or.pred  	%p58, %p56, %p57;
 	@%p58 bra 	BB0_70;
 

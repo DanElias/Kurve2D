@@ -7,6 +7,7 @@ package com.kurve.kurve2d.GUI;
 
 import com.kurve.kurve2d.AdjacencyListGraph.ListGraph;
 import com.kurve.kurve2d.AdjacencyMatrixGraph.MatrixGraph;
+import com.kurve.kurve2d.IterativeSpringForceCalculator;
 import com.kurve.kurve2d.JCudaSpringForceCalculator;
 import java.io.IOException;
 
@@ -20,17 +21,19 @@ public class GUIThread extends Thread{
     private ListGraph list_graph;
     private JCudaSpringForceCalculator jcuda_calculator;
     private JCudaSpringForceCalculator jcuda_calculator2;
+    private IterativeSpringForceCalculator iterative_calculator;
     private static final int NO_DELAYS_PER_YIELD = 16;
     /* Number of frames with a delay of 0 ms before the
     animation thread yields to other running threads. */
     private static int MAX_FRAME_SKIPS = 1;
-    private static int M = 10000;
+    private static int M = 100;
     
     public GUIThread(GraphPanel graph_panel, ListGraph list_graph, MatrixGraph matrix_graph) throws IOException{
         this.graph_panel = graph_panel;
         this.list_graph = list_graph;
         this.matrix_graph = matrix_graph;
         initializeJCudaSpringForceCalculator();
+        initializeIterativeSpringForceCalculator();
     }
     
     public void initializeJCudaSpringForceCalculator() throws IOException {
@@ -50,8 +53,30 @@ public class GUIThread extends Thread{
         }
     }
     
+    public void initializeIterativeSpringForceCalculator(){
+        this.iterative_calculator = new IterativeSpringForceCalculator(
+                this.matrix_graph.getNumberOfVertices(), // num of vertices * num of vertices
+                this.list_graph.getN(), // n * n = size of x/y positions matrix
+                this.matrix_graph.getLinearAdjacencyMatrix(), // adjacency matrix graph
+                this.list_graph.getXPositions(),
+                this.list_graph.getYPositions(),
+                this.list_graph.getXVelocities(),
+                this.list_graph.getYVelocities()
+        );   
+    }
+    
     private void updatePositions() {
         this.jcuda_calculator2.calculate();
+        /*
+        this.iterative_calculator.calculate(
+                this.matrix_graph.getNumberOfVertices(), // num of vertices * num of vertices
+                this.list_graph.getN(), // n * n = size of x/y positions matrix
+                this.matrix_graph.getLinearAdjacencyMatrix(), // adjacency matrix graph
+                this.list_graph.getXPositions(),
+                this.list_graph.getYPositions(),
+                this.list_graph.getXVelocities(),
+                this.list_graph.getYVelocities());
+        */
         this.graph_panel.repaint();
     }
     
@@ -104,7 +129,8 @@ public class GUIThread extends Thread{
         }
         long endTime = System.nanoTime();
         long timeElapsed = endTime - startTime;
-        System.out.println("Execution time in nanoseconds: " + timeElapsed);
-        System.out.println("Execution time in milliseconds: " + timeElapsed / 1000000);
+        System.out.println("Execution time in nanoseconds: " + ((float) timeElapsed));
+        System.out.println("Execution time in milliseconds: " + ((float) timeElapsed / 1000000.0));
+        System.out.println("Execution time in seconds: " + ((float) timeElapsed / 1000000000.0));
     }
 }
