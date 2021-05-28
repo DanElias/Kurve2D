@@ -30,7 +30,6 @@ public class GraphPanel extends JPanel{
         super();
         this.list_graph = list_graph;
         this.matrix_graph = matrix_graph;
-        this.jcuda_calculator = jcuda_calculator;
         this.vertexComponents = new ArrayList<VertexComponent>();
         this.edgeComponents = new ArrayList<EdgeComponent>();
         setBackground(Color.DARK_GRAY);

@@ -1,22 +1,20 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/* 
+ * Force Directed Graph Iterative Calculator in the CPU
+ * @author: Daniel Elias
  */
 package com.kurve.kurve2d;
 
 /**
- *
- * @author danie
+ * @author DanElias
  */
 public class IterativeSpringForceCalculator {
-    private int N;
-    private int positions_n;
+    private int N; // num of vertices * num of vertices
+    private int positions_n; // n * n = size of x/y positions matrix
     private float[] x_positions;
     private float[] y_positions;
     private float[] x_velocities;
     private float[] y_velocities;
-    private int[] linear_adjacency_matrix;
+    private int[] linear_adjacency_matrix; // adjacency matrix graph
     
     public IterativeSpringForceCalculator(
             int N, // num of vertices * num of vertices
@@ -45,21 +43,23 @@ public class IterativeSpringForceCalculator {
         float max_velocity = 100;
         float min_velocity = -100;
         
+        
+        
         for(int id = 0; id < vertices; id++) {
             int vertex_row = id * vertices; // index where the row starts for the vertex in the adj matrix
-            float x = x_positions[id];
-            float y = y_positions[id];
-            float x_velocity = x_velocities[id];
-            float y_velocity = y_velocities[id];
-            float new_x_velocity = 0;
-            float new_y_velocity = 0;
+            float x = x_positions[id]; // current vertex x positions
+            float y = y_positions[id]; // current vertex y position
+            float x_velocity = x_velocities[id]; // current velocity in x component
+            float y_velocity = y_velocities[id]; // current velocity in y component
+            float new_x_velocity = 0; // the new velocity the x component will have
+            float new_y_velocity = 0; // the new velocity the y component will have
 
             for(int pos_index = 0; pos_index < vertices; pos_index++) {
                 //Don't calculate forces with itself
                 if(pos_index == id) {
                     continue;
                 }
-
+                
                 //0 or 1, where 1 is an adjacent vertex in the current vertex row
                 int isAdj = linear_adjacency_matrix[vertex_row + pos_index];
 
@@ -85,7 +85,7 @@ public class IterativeSpringForceCalculator {
                     force = (float) (C1 * Math.log10(distance * distance_scale / C2));
                 } else {
                     // calculate force of repulsion
-                    force = (float) (C3 / Math.pow(distance / distance_scale, 2));
+                    force = -50 *  (float) (C3 / Math.pow(distance / distance_scale, 2));
                 }
 
                 // Calculate new velocities

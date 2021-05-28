@@ -1,5 +1,6 @@
-/*
- *
+/* 
+ * Force Directed Graph Parallel Calculator in the GPU
+ * @author: Daniel Elias
  */
 package com.kurve.kurve2d;
 
@@ -31,6 +32,7 @@ import com.kurve.kurve2d.AdjacencyMatrixGraph.MatrixGraph;
 import static jcuda.driver.JCudaDriver.cuCtxSetCurrent;
 
 /**
+ * @author DanElias
  */
 public class JCudaSpringForceCalculator {
     private String ptxFileName;
@@ -114,6 +116,8 @@ public class JCudaSpringForceCalculator {
         this.y_velocities = y_velocities;
         
         this.GRID_SIZE = (int) Math.ceil((double)this.positions_n / this.THREADS_PER_BLOCK); //gridSizeX
+        
+        System.out.println(this.GRID_SIZE);
         
         //*** Host variables **//
         this.result_positions = new float[this.positions_n];

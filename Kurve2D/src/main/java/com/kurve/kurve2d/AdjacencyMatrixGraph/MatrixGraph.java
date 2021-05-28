@@ -24,7 +24,6 @@ import com.kurve.kurve2d.AdjacencyMatrixGraph.Vertex;
  */
 public class MatrixGraph {
     private HashMap<String, Integer> vertices_ids; // Original id - mat index mapping
-    private ArrayList<Edge> edges;
     private int[][] adjacency_matrix;
     public int[] linear_adjacency_matrix;
     private int N; // CUDA problem size
@@ -34,7 +33,6 @@ public class MatrixGraph {
     
     public MatrixGraph(JSONObject graph_json){
         this.vertices_ids = new HashMap<String, Integer>();
-        this.edges = new ArrayList<Edge>();
         
         Object json_vertices = graph_json.get("vertices");
         this.vertices_list = JSONUtils.objectToJSONObjectArrayList(json_vertices);
@@ -121,6 +119,10 @@ public class MatrixGraph {
     
     public int getNumberOfVertices(){
         return this.n;
+    }
+    
+    public int getNumberOfEdges(){
+        return this.edges_list.size();
     }
     
     public int[][] getAdjacencyMatrix() {

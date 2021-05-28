@@ -59,7 +59,7 @@ __global__ void add(int vertices, int positions_n, int *linear_adjacency_matrix,
                 force = C1 * log10(distance * distance_scale / C2);
             } else {
                 // calculate force of repulsion
-                force = C3 / pow(distance / distance_scale, 2);
+                force = -50 * C3 / pow(distance / distance_scale, 2);
             }
             
             // Calculate new velocities

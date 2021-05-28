@@ -1,12 +1,13 @@
+/* 
+ * Graph Adjacency List Class
+ * @author: Daniel Elias
+ */
 package com.kurve.kurve2d.AdjacencyListGraph;
 
 import java.util.HashMap;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import utils.Utils;
