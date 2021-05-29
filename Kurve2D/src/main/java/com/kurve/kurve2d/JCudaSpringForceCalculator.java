@@ -115,7 +115,7 @@ public class JCudaSpringForceCalculator {
         this.x_velocities = x_velocities;
         this.y_velocities = y_velocities;
         
-        this.GRID_SIZE = (int) Math.ceil((double)this.positions_n / this.THREADS_PER_BLOCK); //gridSizeX
+        this.GRID_SIZE = (int) Math.ceil((float) (((float)this.positions_n) / this.THREADS_PER_BLOCK)); //gridSizeX
         
         System.out.println(this.GRID_SIZE);
         
@@ -146,6 +146,17 @@ public class JCudaSpringForceCalculator {
         // Allocate device output memory
         this.device_result_positions = new CUdeviceptr();
         cuMemAlloc(this.device_result_positions, this.size_bytes);
+        
+        
+        // DEBUG
+        System.out.println("*Matrix graph num of vertices: " + this.N);
+        System.out.println("*n* n size of x y positions matrix: " + this.positions_n);
+        System.out.println("Adj Matrix rows " + this.linear_adjacency_matrix.length);
+        System.out.println("X pos size " + this.x_positions.length);
+        System.out.println("Y pos size " + this.y_positions.length);
+        System.out.println("X vel size " + this.x_velocities.length);
+        System.out.println("Y vel size " + this.y_velocities.length);
+        
     }
     
     public void calculate(){

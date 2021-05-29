@@ -66,8 +66,8 @@ public class GUIThread extends Thread{
     }
     
     private void updatePositions() {
-        //this.jcuda_calculator2.calculate();
-        
+        this.jcuda_calculator2.calculate();
+        /*
         this.iterative_calculator.calculate(
                 this.matrix_graph.getNumberOfVertices(), // num of vertices * num of vertices
                 this.list_graph.getN(), // n * n = size of x/y positions matrix
@@ -76,7 +76,7 @@ public class GUIThread extends Thread{
                 this.list_graph.getYPositions(),
                 this.list_graph.getXVelocities(),
                 this.list_graph.getYVelocities());
-        
+        */
         this.graph_panel.repaint();
     }
     

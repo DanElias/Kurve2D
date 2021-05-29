@@ -14,32 +14,35 @@ __global__ void add(int vertices, int positions_n, int *linear_adjacency_matrix,
     float C4 = 0.1 / scale;
     float max_velocity = 100;
     float min_velocity = -100;
+    int linear_adjacency_matrix_size = vertices * vertices;
     
-    while (id < positions_n){
-        
+    while (id < positions_n && id * vertices + vertices <= linear_adjacency_matrix_size){
         int pos_index;
         int vertex_row = id * vertices; // index where the row starts for the vertex in the adj matrix
         float x = x_positions[id];
         float y = y_positions[id];
-        float x_velocity = x_velocities[id];
-        float y_velocity = y_velocities[id];
         float new_x_velocity = 0;
         float new_y_velocity = 0;
-
-        
 
         for(pos_index = 0; pos_index < vertices; pos_index++) {
             //Don't calculate forces with itself
             if(pos_index == id) {
                 continue;
             }
+
+            
+            //printf("%i", linear_adjacency_matrix[vertex_row + pos_index]);
+           
             
             //0 or 1, where 1 is an adjacent vertex in the current vertex row
             int isAdj = linear_adjacency_matrix[vertex_row + pos_index];
             
+            
             // Coordinates of the other vertex
             float other_x = x_positions[pos_index];
+           
             float other_y = y_positions[pos_index];
+            
             
             // Distance between x and y components of two vertices
             float separation_x = x - other_x;
@@ -69,7 +72,9 @@ __global__ void add(int vertices, int positions_n, int *linear_adjacency_matrix,
             
             new_x_velocity = new_x_velocity - velocity_x;
             new_y_velocity = new_y_velocity - velocity_y;
+            
         }
+        
         
         //synchronize all threads, measure speed between sequential and parallel
         __syncthreads();
@@ -90,8 +95,9 @@ __global__ void add(int vertices, int positions_n, int *linear_adjacency_matrix,
             y_positions[id] = y_positions[id] + y_velocities[id];
         }
         
-
+        
         id =  id + blockDim.x * gridDim.x; // id + 512 * numBlocks    
+        
     }
 }
 

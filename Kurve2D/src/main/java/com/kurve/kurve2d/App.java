@@ -49,7 +49,7 @@ public class App {
     }
     
     public static void main(String args[]) throws IOException{
-        String url = "src/main/java/com/kurve/kurve2d/data_examples/blocks.json";
+        String url = "src/main/java/com/kurve/kurve2d/data_examples/random.json";
         App app = new App(url);
         System.out.println("Finished");
     }
