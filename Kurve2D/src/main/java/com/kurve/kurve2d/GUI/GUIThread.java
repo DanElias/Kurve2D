@@ -5,8 +5,8 @@
  */
 package com.kurve.kurve2d.GUI;
 
-import com.kurve.kurve2d.AdjacencyListGraph.ListGraph;
-import com.kurve.kurve2d.AdjacencyMatrixGraph.MatrixGraph;
+import com.kurve.kurve2d.Graph.ListGraph;
+import com.kurve.kurve2d.Graph.MatrixGraph;
 import com.kurve.kurve2d.IterativeSpringForceCalculator;
 import com.kurve.kurve2d.JCudaSpringForceCalculator;
 import java.io.IOException;

@@ -10,8 +10,8 @@ import org.json.simple.JSONObject;
 
 import utils.JSONUtils;
 
-import com.kurve.kurve2d.AdjacencyListGraph.ListGraph;
-import com.kurve.kurve2d.AdjacencyMatrixGraph.MatrixGraph;
+import com.kurve.kurve2d.Graph.ListGraph;
+import com.kurve.kurve2d.Graph.MatrixGraph;
 import com.kurve.kurve2d.GUI.Frame;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;

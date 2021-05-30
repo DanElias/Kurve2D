@@ -1,8 +1,8 @@
 /* 
- * Graph Edge Class
+ * Graph Adjacency List Edge Class
  * @author: Daniel Elias
  */
-package com.kurve.kurve2d.AdjacencyListGraph;
+package com.kurve.kurve2d.Graph;
 
 /**
  *

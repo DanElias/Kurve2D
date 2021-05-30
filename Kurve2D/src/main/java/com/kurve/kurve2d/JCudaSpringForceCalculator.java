@@ -28,7 +28,7 @@ import jcuda.driver.CUmodule;
 import jcuda.driver.JCudaDriver;
 import utils.JCudaSamplesUtils;
 
-import com.kurve.kurve2d.AdjacencyMatrixGraph.MatrixGraph;
+import com.kurve.kurve2d.Graph.MatrixGraph;
 import static jcuda.driver.JCudaDriver.cuCtxSetCurrent;
 
 /**

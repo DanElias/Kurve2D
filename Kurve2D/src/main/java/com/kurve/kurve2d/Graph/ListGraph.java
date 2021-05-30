@@ -2,22 +2,19 @@
  * Graph Adjacency List Class
  * @author: Daniel Elias
  */
-package com.kurve.kurve2d.AdjacencyListGraph;
+package com.kurve.kurve2d.Graph;
 
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.json.simple.JSONObject;
-
 import utils.JSONUtils;
-
 
 /**
  * Adjacency List representation of a Graph
  * @author DanElias
  */
-public class ListGraph {
+public class ListGraph{
     private HashMap<Integer, ArrayList<Integer>> vertices_mapping; // Matrix mapping
     private HashMap<Integer, Vertex> vertices; // Actual vertex objects
     private HashMap<String, Integer> vertices_ids; // Original id - mat index mapping
@@ -31,10 +28,10 @@ public class ListGraph {
     private List<JSONObject> edges_list; // Json edges
     
     public ListGraph(JSONObject graph_json){
-        this.vertices_mapping = new HashMap<Integer, ArrayList<Integer>>();
-        this.vertices = new HashMap<Integer, Vertex>();
-        this.vertices_ids = new HashMap<String, Integer>();
-        this.edges = new ArrayList<Edge>();
+        this.vertices_mapping = new HashMap<>();
+        this.vertices = new HashMap<>();
+        this.vertices_ids = new HashMap<>();
+        this.edges = new ArrayList<>();
         
         Object json_vertices = graph_json.get("vertices");
         this.vertices_list = JSONUtils.objectToJSONObjectArrayList(json_vertices);
