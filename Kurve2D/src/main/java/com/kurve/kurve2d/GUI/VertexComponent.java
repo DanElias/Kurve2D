@@ -1,38 +1,62 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * UI Vertex component
+ * @author DanElias
  */
 package com.kurve.kurve2d.GUI;
 
 import java.awt.geom.Ellipse2D;
 
 /**
- *
- * @author danie
+ * UI Vertex component
+ * @author DanElias
  */
 public class VertexComponent {
-    private float x;
-    private float y;
-    private int WIDTH;
-    private int HEIGHT;
+    private float x; // coordinate x
+    private float y; // cordinate y
+    private static final float RADIUS = (float) 3.5; // ellipse radius
     
+    /**
+     * @author DanElias
+     * Set starting (x,y) coordinate for the ellipse
+     * @param x
+     * @param y 
+     */
     public VertexComponent(float x, float y) {
         this.x = x;
         this.y = y;
-        this.WIDTH = 7;
-        this.HEIGHT = 7;
     }
     
+    /**
+     * @author DanElias
+     * @return redius
+     */
+    public static float getRadius() {
+        return RADIUS;
+    }
+    
+    /**
+     * @author DanElias
+     * Set the nex x coordinate
+     * @param x 
+     */
     public void setX(float x) {
         this.x = x;
     }
     
+    /**
+     * @author DanElias
+     * Set the nex y coordinate
+     * @param y 
+     */
     public void setY(float y) {
         this.y = y;
     }
     
+    /**
+     * @author DanElias
+     * @return circle drawing
+     */
     public Ellipse2D getCircle() {
-        return new Ellipse2D.Double(this.x, this.y, this.WIDTH, this.HEIGHT);
+        return new Ellipse2D.Double(this.x, this.y, this.RADIUS * 2, this.RADIUS * 2);
     }
 }
