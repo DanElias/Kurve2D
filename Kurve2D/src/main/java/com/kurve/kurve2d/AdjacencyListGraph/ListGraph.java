@@ -10,17 +10,11 @@ import java.util.List;
 
 import org.json.simple.JSONObject;
 
-import utils.Utils;
-
-import java.lang.Math;
-import java.util.HashSet;
 import utils.JSONUtils;
 
-import com.kurve.kurve2d.AdjacencyListGraph.Vertex;
-import com.kurve.kurve2d.AdjacencyListGraph.Edge;
 
 /**
- *
+ * Adjacency List representation of a Graph
  * @author DanElias
  */
 public class ListGraph {
@@ -28,8 +22,7 @@ public class ListGraph {
     private HashMap<Integer, Vertex> vertices; // Actual vertex objects
     private HashMap<String, Integer> vertices_ids; // Original id - mat index mapping
     private ArrayList<Edge> edges;
-    private int N; // CUDA problem size
-    private int n; // number of vertices
+    private int number_of_vertices; // CUDA problem size
     public float[] x_velocities;
     public float[] y_velocities;
     public float[] x_positions;
@@ -49,28 +42,28 @@ public class ListGraph {
         Object json_edges = graph_json.get("edges");
         this.edges_list = JSONUtils.objectToJSONObjectArrayList(json_edges);
         
-        this.N = calculateN();
+        this.number_of_vertices = this.vertices_list.size();
         
-        this.x_positions = new float[this.N];
-        this.y_positions = new float[this.N];
-        this.x_velocities = new float[this.N];
-        this.y_velocities = new float[this.N];
+        this.x_positions = new float[this.number_of_vertices];
+        this.y_positions = new float[this.number_of_vertices];
+        this.x_velocities = new float[this.number_of_vertices];
+        this.y_velocities = new float[this.number_of_vertices];
         
         setVertices();
         setEdges();
-        setNonAdjacentLists();
         createPolygonCoordinates((float) 250);
-        //setXYInitialPositionsMatrices();
-        //setXYInitialVelocitiesMatrices();
         //printGraph();
-        // printXYPositionsMatrices();
+        //printXYPositionsMatrices();
     }
     
+    /**
+     * @author DanElias
+     * Parse the json object vertices to transform to java collection
+     */
     private void setVertices() {
         Integer index = 0;
         for (JSONObject vertex : this.vertices_list){
             String vertex_id = "";
-            
             if (vertex.get("id") != null) {
                 vertex_id = vertex.get("id").toString();
             } else {
@@ -78,7 +71,6 @@ public class ListGraph {
                     vertex_id = vertex.get("name").toString();
                 }
             }
-            
             String vertex_value = (vertex.get("value") != null) ? vertex.get("value").toString() : vertex_id;
             Vertex new_vertex = new Vertex(index, vertex_id, vertex_value);
             this.vertices.put(index, new_vertex);
@@ -87,6 +79,10 @@ public class ListGraph {
         }
     }
     
+    /**
+     * @author DanElias
+     * Parse the json object edges to transform to java collection
+     */
     private void setEdges() {
         for (JSONObject edge : this.edges_list){
             String source = edge.get("source").toString();
@@ -98,110 +94,97 @@ public class ListGraph {
         }
     }
     
-    public void setNonAdjacentLists() {
-        for (Vertex vertex : this.vertices.values()){
-            ArrayList<Integer> non_adjacent = 
-                    new ArrayList<Integer>(this.vertices_ids.values());
-            ArrayList<Integer> adjacents_and_self =
-                    new ArrayList(vertex.getAdjacentVertices());
-            adjacents_and_self.add(vertex.getId());
-            non_adjacent.removeAll(vertex.getAdjacentVertices());
-            vertex.setNonadjacentVertices(non_adjacent);
-        }
-    }
-    
+    /**
+     * @author DanElias
+     * Prints the graph
+     */
     public void printGraph() {
         for (Vertex vertex : this.vertices.values()){
             System.out.println("Id: ");
             System.out.println(vertex.getId());
             System.out.println("Adjacent vertices: ");
             System.out.println(vertex.getAdjacentVertices());
-            System.out.println("Nonadjacent vertices: ");
-            System.out.println(vertex.getNonadjacentVertices());
         }
     }
     
-    public void createPolygonCoordinates(float radius) {
+    /**
+     * @author DanElias
+     * Sets the graphs vertices starting positions in a circunference
+     */
+    private void createPolygonCoordinates(float radius) {
         float sides = this.vertices.size();
         float fpi = (float) Math.PI;
         float angle_per_side = (2 * fpi / sides);
         float initial_angle = fpi / 2;
-        //(x,y,z) = ( r * cos(theta), r * sin(theta), 0)
+        //(x,y) = ( r * cos(theta), r * sin(theta))
         for (int i = 0; i < sides; i++){
             float angle = angle_per_side * i + initial_angle;
-            float x = (float) (Math.cos(angle) * radius);
-            float y = (float) (Math.sin(angle) * radius);
-            System.out.println();
+            float x = (float) (radius * Math.cos(angle));
+            float y = (float) (radius * Math.sin(angle));
             this.x_positions[i] = x + 530;
             this.y_positions[i] = y + 350;
         }
     } 
     
-    public void setXYInitialPositionsMatrices() {
-        for (int i = 0; i < this.N; i++){
-            this.x_positions[i] = (float) i + i * 94;
-	}
-        
-        for (int i = 0; i < this.N; i++){
-            this.y_positions[i] = (float) this.N - i + i * 36;
-	}
-    }
-    
-    public void setXYInitialVelocitiesMatrices() {
-        for (int i = 0; i < this.N; i++){
-            this.x_velocities[i] = 0;
-	}
-        
-        for (int i = 0; i < this.N; i++){
-            this.y_velocities[i] = 0;
-	}
-    }
-    
+    /**
+     * @author DanElias
+     * Prints the (x,y) coordinates for each vertex
+     */
     public void printXYPositionsMatrices() {
         System.out.println("\nX positions: ");
-        for (int i = 0; i < this.n; i++){
-		for (int j = 0; j < this.n; j++){
-			System.out.print("\t" + this.x_positions[i*this.n+j]);
+        for (int i = 0; i < this.number_of_vertices; i++){
+		for (int j = 0; j < this.number_of_vertices; j++){
+			System.out.print("\t" + this.x_positions[i*this.number_of_vertices+j]);
 		}
 		System.out.println("\n");
 	}
         System.out.println("\n");
         System.out.println("Y positions: ");
-        for (int i = 0; i < this.n; i++){
-		for (int j = 0; j < this.n; j++){
-			System.out.print("\t" + this.y_positions[i*this.n+j]);
+        for (int i = 0; i < this.number_of_vertices; i++){
+		for (int j = 0; j < this.number_of_vertices; j++){
+			System.out.print("\t" + this.y_positions[i*this.number_of_vertices+j]);
 		}
 		System.out.println("\n");
 	}
         System.out.println("\n");
-	
     }
     
-    public int calculateN() {
-        this.n = (int) Math.ceil(Math.sqrt((double) this.vertices_list.size()));
-        return n * n;
+    /**
+     * @author
+     * @return number of vertices in the graph 
+     */
+    public int getNumberOfVertices(){
+        return this.number_of_vertices;
     }
     
-    public int getN(){
-        return this.N;
-    }
-    
-    public int getn(){
-        return this.n;
-    }
-    
+    /**
+     * @author DanElias
+     * @return reference to the x positions array
+     */
     public float[] getXPositions() {
         return this.x_positions;
     }
     
+    /**
+     * @author DanElias
+     * @return the reference to the y positions array
+     */
     public float[] getYPositions() {
         return this.y_positions;
     }
     
+    /**
+     * @author DanElias
+     * @return the reference to the x velocities array
+     */
     public float[] getXVelocities() {
         return this.x_velocities;
     }
     
+    /**
+     * @author DanElias
+     * @return the reference to the y velocities array
+     */
     public float[] getYVelocities() {
         return this.y_velocities;
     }
