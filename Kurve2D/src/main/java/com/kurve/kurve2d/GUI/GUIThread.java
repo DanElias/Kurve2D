@@ -26,7 +26,7 @@ public class GUIThread extends Thread{
     /* Number of frames with a delay of 0 ms before the
     animation thread yields to other running threads. */
     private static int MAX_FRAME_SKIPS = 1;
-    private static int M = 1000;
+    private static int M = 100;
     
     public GUIThread(GraphPanel graph_panel, ListGraph list_graph, MatrixGraph matrix_graph) throws IOException{
         this.graph_panel = graph_panel;

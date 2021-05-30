@@ -29,10 +29,6 @@ __global__ void add(int vertices, int positions_n, int *linear_adjacency_matrix,
             if(pos_index == id) {
                 continue;
             }
-
-            
-            //printf("%i", linear_adjacency_matrix[vertex_row + pos_index]);
-           
             
             //0 or 1, where 1 is an adjacent vertex in the current vertex row
             int isAdj = linear_adjacency_matrix[vertex_row + pos_index];
