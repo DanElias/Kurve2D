@@ -5,11 +5,8 @@
 package com.kurve.kurve2d;
 
 import java.io.IOException;
-
 import org.json.simple.JSONObject;
-
 import utils.JSONUtils;
-
 import com.kurve.kurve2d.Graph.ListGraph;
 import com.kurve.kurve2d.Graph.MatrixGraph;
 import com.kurve.kurve2d.GUI.Frame;
@@ -39,7 +36,7 @@ public class App {
         initializeGUI();
     }
     
-    public void initializeGUI() throws IOException {
+    private void initializeGUI() throws IOException {
         // Set the GUI
         this.frame = new Frame(this.list_graph, this.matrix_graph);
         ImageIcon logo = new ImageIcon("src/main/java/com/kurve/kurve2d/GUI/assets/images/logo.png");
@@ -51,7 +48,6 @@ public class App {
     public static void main(String args[]) throws IOException{
         String url = "src/main/java/com/kurve/kurve2d/data_examples/random2.json";
         App app = new App(url);
-        System.out.println("Finished");
     }
     
 }

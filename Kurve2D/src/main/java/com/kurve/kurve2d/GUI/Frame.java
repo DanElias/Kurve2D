@@ -1,25 +1,23 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * @author DanElias
+ * JFrame for the GUI
  */
 package com.kurve.kurve2d.GUI;
 
 import com.kurve.kurve2d.Graph.ListGraph;
 import com.kurve.kurve2d.Graph.MatrixGraph;
-import com.kurve.kurve2d.JCudaSpringForceCalculator;
 import java.io.IOException;
 import javax.swing.JFrame;
 
 /**
- *
- * @author danie
+ * @author DanElias
+ * JFrame for the GUI
  */
 public class Frame extends JFrame{
-    private final int WIDTH = 1080;
-    private final int HEIGHT = 720;
-    private GraphPanel graphPanel;
-    private GUIThread gui_thread;
+    private final int WIDTH = 1080; //jframe width
+    private final int HEIGHT = 720; //jframe width
+    private GraphPanel graphPanel; //JPanel to draw the graph
+    private GUIThread gui_thread; //Thread that updates JPanel redrawing graph
     
     public Frame(ListGraph list_graph, MatrixGraph matrix_graph) throws IOException{
         super();

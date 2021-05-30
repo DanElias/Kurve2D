@@ -1,7 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * @author DanElias
+ * JPanel for the GUI
  */
 package com.kurve.kurve2d.GUI;
 
@@ -16,8 +15,8 @@ import java.util.ArrayList;
 import javax.swing.JPanel;
 
 /**
- *
- * @author danie
+ * @author DanElias
+ * JPanel for the GUI
  */
 public class GraphPanel extends JPanel{
     private ArrayList<VertexComponent> vertexComponents;
@@ -33,14 +32,18 @@ public class GraphPanel extends JPanel{
         this.vertexComponents = new ArrayList<VertexComponent>();
         this.edgeComponents = new ArrayList<EdgeComponent>();
         setBackground(Color.DARK_GRAY);
+        
+        int[][] adj_matrix = this.matrix_graph.getAdjacencyMatrix();
+        int n = this.matrix_graph.getNumberOfVertices();
+        
+        // add vertex graphic components
         for (int i = 0; i < this.matrix_graph.getNumberOfVertices(); i++){
             float vertex_x  = this.list_graph.getXPositions()[i];
             float vertex_y  = this.list_graph.getYPositions()[i];
             this.vertexComponents.add(new VertexComponent(vertex_x,vertex_y));
         }
         
-        int[][] adj_matrix = this.matrix_graph.getAdjacencyMatrix();
-        int n = this.matrix_graph.getNumberOfVertices();
+        // add edges graphic components
         for (int i = 0; i < n; i++){
             for (int j = i; j < n; j++){
                 if (adj_matrix[i][j] == 1) {
@@ -54,6 +57,10 @@ public class GraphPanel extends JPanel{
         }
     }
     
+    /**
+     * Starts the painting of graphics components
+     * @param g 
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -65,20 +72,28 @@ public class GraphPanel extends JPanel{
         update(g2);
     }
     
+    /**
+     * Repaints panel and its graphic components of every frame
+     * @param g2 
+     */
     public void update(Graphics2D g2) {
-        int[][] adj_matrix = this.matrix_graph.getAdjacencyMatrix();
-        int n = this.matrix_graph.getNumberOfVertices();
-        int edgeListPositions = 0;
+        int n = this.matrix_graph.getNumberOfVertices(); // num of vertices to be drawn
+        int edgeListPositions = 0; // traverse the edges UI Components
         
         // Draw the edges first
         for (int i = 0; i < n; i++){
             for (int j = i; j < n; j++){
-                if (adj_matrix[i][j] == 1) {
-                    float vertex_x1  = this.list_graph.getXPositions()[i] + VertexComponent.getRadius();
-                    float vertex_y1  = this.list_graph.getYPositions()[i] + VertexComponent.getRadius();
-                    float vertex_x2  = this.list_graph.getXPositions()[j] + VertexComponent.getRadius() ;
-                    float vertex_y2  = this.list_graph.getYPositions()[j] + VertexComponent.getRadius();
-                    EdgeComponent edge = this.edgeComponents.get(edgeListPositions);
+                if (this.matrix_graph.getAdjacencyMatrix()[i][j] == 1) {
+                    float vertex_x1 =
+                            this.list_graph.getXPositions()[i] + VertexComponent.getRadius();
+                    float vertex_y1 =
+                            this.list_graph.getYPositions()[i] + VertexComponent.getRadius();
+                    float vertex_x2 =
+                            this.list_graph.getXPositions()[j] + VertexComponent.getRadius();
+                    float vertex_y2 =
+                            this.list_graph.getYPositions()[j] + VertexComponent.getRadius();
+                    EdgeComponent edge =
+                            this.edgeComponents.get(edgeListPositions);
                     edge.setX1(vertex_x1);
                     edge.setY1(vertex_y1);
                     edge.setX2(vertex_x2);
