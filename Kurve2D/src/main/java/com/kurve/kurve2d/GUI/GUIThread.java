@@ -54,8 +54,7 @@ public class GUIThread extends Thread{
         try {
             this.jcuda_calculator = new JCudaSpringForceCalculator(
                     "", // ptx filename url
-                    this.matrix_graph.getNumberOfVertices(), // num of vertices * num of vertices
-                    this.list_graph.getNumberOfVertices(), //  num of vertices = size of x/y positions matrix
+                    this.matrix_graph.getNumberOfVertices(), //  num of vertices = size of x/y positions matrix
                     this.matrix_graph.getLinearAdjacencyMatrix(), // adjacency matrix graph
                     this.list_graph.getXPositions(),
                     this.list_graph.getYPositions(),
@@ -73,8 +72,7 @@ public class GUIThread extends Thread{
      */
     public void initializeIterativeSpringForceCalculator(){
         this.iterative_calculator = new IterativeSpringForceCalculator(
-                this.matrix_graph.getNumberOfVertices(), // num of vertices * num of vertices
-                this.list_graph.getNumberOfVertices(), // num of vertices = size of x/y positions matrix
+                this.matrix_graph.getNumberOfVertices(), // num of vertices = size of x/y positions matrix
                 this.matrix_graph.getLinearAdjacencyMatrix(), // adjacency matrix graph
                 this.list_graph.getXPositions(),
                 this.list_graph.getYPositions(),
@@ -92,8 +90,7 @@ public class GUIThread extends Thread{
         this.jcuda_calculator.calculate();
         /*
         this.iterative_calculator.calculate(
-                this.matrix_graph.getNumberOfVertices(), // num of vertices * num of vertices
-                this.list_graph.getN(), // n * n = size of x/y positions matrix
+                this.matrix_graph.getNumberOfVertices(), // num of vertices
                 this.matrix_graph.getLinearAdjacencyMatrix(), // adjacency matrix graph
                 this.list_graph.getXPositions(),
                 this.list_graph.getYPositions(),

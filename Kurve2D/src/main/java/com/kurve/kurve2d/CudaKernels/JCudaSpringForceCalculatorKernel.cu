@@ -3,7 +3,7 @@ extern "C"
 #include <math.h>
 #include <stdio.h>
 
-__global__ void add(int vertices, int positions_n, int *linear_adjacency_matrix, float *x_positions, float *y_positions, float *x_velocities, float *y_velocities, float *result_positions){
+__global__ void add(int vertices, int *linear_adjacency_matrix, float *x_positions, float *y_positions, float *x_velocities, float *y_velocities){
     int index = threadIdx.x + blockIdx.x * blockDim.x; // 0 + 0 * 512
     int id = index;
     float scale = 1;
@@ -16,7 +16,7 @@ __global__ void add(int vertices, int positions_n, int *linear_adjacency_matrix,
     float min_velocity = -100;
     int linear_adjacency_matrix_size = vertices * vertices;
     
-    while (id < positions_n && id * vertices + vertices <= linear_adjacency_matrix_size){
+    while (id < vertices && id * vertices + vertices <= linear_adjacency_matrix_size){
         int pos_index;
         int vertex_row = id * vertices; // index where the row starts for the vertex in the adj matrix
         float x = x_positions[id];
@@ -90,7 +90,6 @@ __global__ void add(int vertices, int positions_n, int *linear_adjacency_matrix,
         if (y_positions[id] + y_velocities[id] < 675 && y_positions[id] + y_velocities[id] > 0) {
             y_positions[id] = y_positions[id] + y_velocities[id];
         }
-        
         
         id =  id + blockDim.x * gridDim.x; // id + 512 * numBlocks    
         

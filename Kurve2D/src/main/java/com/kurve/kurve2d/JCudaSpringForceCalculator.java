@@ -1,9 +1,10 @@
 /* 
- * Force Directed Graph Parallel Calculator in the GPU
+ * Force Directed Graph Parallel Calculator in the GPU device
  * @author: Daniel Elias
  */
 package com.kurve.kurve2d;
 
+// JCUDA imports
 import static jcuda.driver.JCudaDriver.cuCtxCreate;
 import static jcuda.driver.JCudaDriver.cuCtxSynchronize;
 import static jcuda.driver.JCudaDriver.cuDeviceGet;
@@ -15,8 +16,7 @@ import static jcuda.driver.JCudaDriver.cuMemcpyDtoH;
 import static jcuda.driver.JCudaDriver.cuMemcpyHtoD;
 import static jcuda.driver.JCudaDriver.cuModuleGetFunction;
 import static jcuda.driver.JCudaDriver.cuModuleLoad;
-
-import java.io.IOException;
+import static jcuda.driver.JCudaDriver.cuCtxSetCurrent;
 
 import jcuda.Pointer;
 import jcuda.Sizeof;
@@ -26,12 +26,13 @@ import jcuda.driver.CUdeviceptr;
 import jcuda.driver.CUfunction;
 import jcuda.driver.CUmodule;
 import jcuda.driver.JCudaDriver;
+
+import java.io.IOException;
+
 import utils.JCudaSamplesUtils;
 
-import com.kurve.kurve2d.Graph.MatrixGraph;
-import static jcuda.driver.JCudaDriver.cuCtxSetCurrent;
-
 /**
+ * Force Directed Graph Parallel Calculator in the GPU device
  * @author DanElias
  */
 public class JCudaSpringForceCalculator {
@@ -41,7 +42,6 @@ public class JCudaSpringForceCalculator {
     private CUmodule module;
     private CUfunction function;
     private int N;
-    private int positions_n;
     private int size_bytes;
     private int size_bytes_linear_adjacency_matrix;
     private float[] x_positions;
@@ -57,19 +57,21 @@ public class JCudaSpringForceCalculator {
     private CUdeviceptr device_y_positions;
     private CUdeviceptr device_x_velocities;
     private CUdeviceptr device_y_velocities;
-    private CUdeviceptr device_result_positions;
-    float result_positions[];
     
     /**
-     * Entry point
+     * Initialize JCUDA object
      * @param ptxFileName compiled ptx filename if already exists
      * @param N size of the problem
+     * @param linear_adjacency_matrix
+     * @param x_positions
+     * @param y_positions
+     * @param x_velocities
+     * @param y_velocities
      * @throws IOException If an IO error occurs
      */
     public JCudaSpringForceCalculator(
             String ptxFileName, // ptx filename url
-            int N, // num of vertices * num of vertices
-            int positions_n, // n * n = size of x/y positions matrix
+            int N, // n * n = size of x/y positions matrix
             int[] linear_adjacency_matrix, // adjacency matrix graph
             float[] x_positions,
             float[] y_positions,
@@ -80,7 +82,7 @@ public class JCudaSpringForceCalculator {
         JCudaDriver.setExceptionsEnabled(true);
         
         if(ptxFileName.isEmpty()) {
-            // Create the PTX file by calling the NVCC
+            // Create the PTX file by calling the NVCC compiler
             this.ptxFileName = JCudaSamplesUtils.preparePtxFile(
             "src/main/java/com/kurve/kurve2d/CudaKernels/JCudaSpringForceCalculatorKernel.cu");
             // System.out.println(ptxFileName);
@@ -106,8 +108,7 @@ public class JCudaSpringForceCalculator {
         
         // Initialize problem size N
         this.N = N;
-        this.positions_n = positions_n;
-        this.size_bytes = this.positions_n * Sizeof.FLOAT;
+        this.size_bytes = this.N * Sizeof.FLOAT;
         this.size_bytes_linear_adjacency_matrix = this.N * this.N * Sizeof.INT;
         this.linear_adjacency_matrix = linear_adjacency_matrix;
         this.x_positions = x_positions;
@@ -115,12 +116,9 @@ public class JCudaSpringForceCalculator {
         this.x_velocities = x_velocities;
         this.y_velocities = y_velocities;
         
-        this.GRID_SIZE = (int) Math.ceil((float) (((float)this.positions_n) / this.THREADS_PER_BLOCK)); //gridSizeX
+        this.GRID_SIZE =(int) Math.ceil((float) (((float) this.N) / this.THREADS_PER_BLOCK)); //gridSizeX
         
         System.out.println(this.GRID_SIZE);
-        
-        //*** Host variables **//
-        this.result_positions = new float[this.positions_n];
         
         //*** Device variables **//
         // Allocate Device Linear Adjacency Matrix
@@ -143,31 +141,14 @@ public class JCudaSpringForceCalculator {
         this.device_y_velocities = new CUdeviceptr(); 
         cuMemAlloc(this.device_y_velocities, this.size_bytes);
         
-        // Allocate device output memory
-        this.device_result_positions = new CUdeviceptr();
-        cuMemAlloc(this.device_result_positions, this.size_bytes);
-        
-        
-        // DEBUG
-        System.out.println("*Matrix graph num of vertices: " + this.N);
-        System.out.println("*n* n size of x y positions matrix: " + this.positions_n);
-        System.out.println("Adj Matrix rows " + this.linear_adjacency_matrix.length);
-        System.out.println("X pos size " + this.x_positions.length);
-        System.out.println("Y pos size " + this.y_positions.length);
-        System.out.println("X vel size " + this.x_velocities.length);
-        System.out.println("Y vel size " + this.y_velocities.length);
-        
     }
     
+    /**
+     * @author DanElias
+     * Calculates new positions with JCuda
+     */
     public void calculate(){
-        cuCtxSetCurrent(this.context);
-        
-        /*
-        printXYPositionsMatrices(this.x_positions,"X positions before");
-        printXYPositionsMatrices(this.y_positions,"Y positions before");
-        printXYPositionsMatrices(this.x_velocities,"X velocities before");
-        printXYPositionsMatrices(this.y_velocities,"Y velocities before");
-        */
+        cuCtxSetCurrent(this.context); // remember to set thread context
 
         //*** Cuda Memcpy Host to Device **//
         // Copy the host input data to the device variables
@@ -200,13 +181,11 @@ public class JCudaSpringForceCalculator {
         Pointer kernelParameters = Pointer.to(
         // params to be sent to kernel __global_
             Pointer.to(new int[]{this.N}), // number of vertices
-            Pointer.to(new int[]{this.positions_n}), // size n * n of positions matrices
             Pointer.to(this.device_linear_adjacency_matrix),
             Pointer.to(this.device_x_positions),
             Pointer.to(this.device_y_positions),
             Pointer.to(this.device_x_velocities),
-            Pointer.to(this.device_y_velocities),
-            Pointer.to(this.device_result_positions)
+            Pointer.to(this.device_y_velocities)
         );
         
         //*** Kernel Call **// 
@@ -220,12 +199,6 @@ public class JCudaSpringForceCalculator {
         
         // Synchronization
         cuCtxSynchronize();
-
-        // Copy the device output to the host.
-        cuMemcpyDtoH(
-            Pointer.to(this.result_positions),
-            this.device_result_positions,
-            this.size_bytes);
         
         // Copy the device output to the host.
         cuMemcpyDtoH(
@@ -250,35 +223,17 @@ public class JCudaSpringForceCalculator {
             Pointer.to(this.y_velocities),
             this.device_y_velocities,
             this.size_bytes);
-        
-        
-        // Verify the result
-        /*
-        printXYPositionsMatrices(this.x_positions,"X positions after");
-        printXYPositionsMatrices(this.y_positions,"Y positions after");
-        printXYPositionsMatrices(this.x_velocities,"X velocities after");
-        printXYPositionsMatrices(this.y_velocities,"Y velocities after");
-        */
     }
     
+    /**
+     * Frees GPU allocated memory
+     * @author DanElias
+     */
     public void free() {
         // Clean up.
         cuMemFree(this.device_linear_adjacency_matrix);
         cuMemFree(this.device_x_positions);
         cuMemFree(this.device_y_positions);
-        cuMemFree(this.device_result_positions);
-    }
-    
-    public void printXYPositionsMatrices(float[] results, String text) {
-        int n = (int) Math.sqrt(this.positions_n);
-        System.out.println("\n results " + text + ": ");
-        for (int i = 0; i < n; i++){
-		for (int j = 0; j < n; j++){
-			System.out.print("\t" + results[i*n+j]);
-		}
-		System.out.println("\n");
-	}
-        System.out.println("\n");
     }
 }
 

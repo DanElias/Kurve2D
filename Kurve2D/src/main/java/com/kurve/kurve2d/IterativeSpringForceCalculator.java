@@ -5,11 +5,11 @@
 package com.kurve.kurve2d;
 
 /**
+ * Force Directed Graph Iterative Calculator in the CPU N^2 BIG O
  * @author DanElias
  */
 public class IterativeSpringForceCalculator {
-    private int N; // num of vertices * num of vertices
-    private int positions_n; // n * n = size of x/y positions matrix
+    private int N; // num of vertices
     private float[] x_positions;
     private float[] y_positions;
     private float[] x_velocities;
@@ -17,15 +17,13 @@ public class IterativeSpringForceCalculator {
     private int[] linear_adjacency_matrix; // adjacency matrix graph
     
     public IterativeSpringForceCalculator(
-            int N, // num of vertices * num of vertices
-            int positions_n, // n * n = size of x/y positions matrix
+            int N, // num of vertices
             int[] linear_adjacency_matrix, // adjacency matrix graph
             float[] x_positions,
             float[] y_positions,
             float[] x_velocities,
             float[] y_velocities) {
         this.N = N;
-        this.positions_n = positions_n;
         this.linear_adjacency_matrix = linear_adjacency_matrix;
         this.x_positions = x_positions;
         this.y_positions = y_positions;
@@ -33,7 +31,13 @@ public class IterativeSpringForceCalculator {
         this.y_velocities = y_velocities;
     }
     
-    public void calculate(int vertices, int positions_n, int[] linear_adjacency_matrix, float[] x_positions, float[] y_positions, float[] x_velocities, float[] y_velocities) {
+    public void calculate(
+            int vertices,
+            int[] linear_adjacency_matrix,
+            float[] x_positions,
+            float[] y_positions,
+            float[] x_velocities,
+            float[] y_velocities) {
         float scale = 1;
         float distance_scale = 1;
         float C1 = (float) 2.0 / scale;
@@ -43,14 +47,10 @@ public class IterativeSpringForceCalculator {
         float max_velocity = 100;
         float min_velocity = -100;
         
-        
-        
         for(int id = 0; id < vertices; id++) {
             int vertex_row = id * vertices; // index where the row starts for the vertex in the adj matrix
             float x = x_positions[id]; // current vertex x positions
             float y = y_positions[id]; // current vertex y position
-            float x_velocity = x_velocities[id]; // current velocity in x component
-            float y_velocity = y_velocities[id]; // current velocity in y component
             float new_x_velocity = 0; // the new velocity the x component will have
             float new_y_velocity = 0; // the new velocity the y component will have
 
@@ -91,7 +91,6 @@ public class IterativeSpringForceCalculator {
                 // Calculate new velocities
                 float velocity_x = separation_x * force / distance * C4;
                 float velocity_y = separation_y * force / distance * C4;
-
 
                 new_x_velocity = new_x_velocity - velocity_x;
                 new_y_velocity = new_y_velocity - velocity_y;
