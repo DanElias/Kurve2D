@@ -27,7 +27,7 @@ public class GUIThread extends Thread{
     animation thread yields to other running threads. */
     private static int MAX_FRAME_SKIPS = 1;
     // M is defined by the algorithm of Spring Force Directed Graphs
-    private static int M = 100; 
+    private static int M = 250; 
     
     /**
      * Initializes object
@@ -50,10 +50,10 @@ public class GUIThread extends Thread{
      * @author DanElias
      * @throws IOException 
      */
-    public void initializeJCudaSpringForceCalculator() throws IOException {
+    private void initializeJCudaSpringForceCalculator() throws IOException {
         try {
             this.jcuda_calculator = new JCudaSpringForceCalculator(
-                    "", // ptx filename url
+                    "src/main/java/com/kurve/kurve2d/CudaKernels/JCudaSpringForceCalculatorKernel.ptx", // ptx filename url
                     this.matrix_graph.getNumberOfVertices(), //  num of vertices = size of x/y positions matrix
                     this.matrix_graph.getLinearAdjacencyMatrix(), // adjacency matrix graph
                     this.list_graph.getXPositions(),
@@ -70,7 +70,7 @@ public class GUIThread extends Thread{
      * @author DanElias
      * Initialize the Iterative Calculator
      */
-    public void initializeIterativeSpringForceCalculator(){
+    private void initializeIterativeSpringForceCalculator(){
         this.iterative_calculator = new IterativeSpringForceCalculator(
                 this.matrix_graph.getNumberOfVertices(), // num of vertices = size of x/y positions matrix
                 this.matrix_graph.getLinearAdjacencyMatrix(), // adjacency matrix graph

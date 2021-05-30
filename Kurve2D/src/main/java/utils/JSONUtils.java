@@ -1,3 +1,7 @@
+/**
+ * @author DanElias
+ * JSON Utils
+ */
 package utils;
 
 import org.json.simple.JSONArray;
@@ -12,7 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- *
+ * JSON Utils
  * @author DanElias
  */
 public class JSONUtils {

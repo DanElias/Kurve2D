@@ -31,8 +31,6 @@ public class App {
         this.list_graph = new ListGraph(this.graph_json_object);
         this.matrix_graph = new MatrixGraph(this.graph_json_object);
         // starts the animation/force directed graph simulation
-        System.out.println(this.matrix_graph.getNumberOfVertices());
-        System.out.println(this.matrix_graph.getNumberOfEdges());
         initializeGUI();
     }
     
@@ -46,7 +44,7 @@ public class App {
     }
     
     public static void main(String args[]) throws IOException{
-        String url = "src/main/java/com/kurve/kurve2d/data_examples/random2.json";
+        String url = "src/main/java/com/kurve/kurve2d/data_examples/blocks.json";
         App app = new App(url);
     }
     
