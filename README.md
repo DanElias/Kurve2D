@@ -21,7 +21,7 @@ Graph visualizations ideas include:
 ## Technologies:
 - Java
 - JCuda
-- Cuda
+- Nvidia CUDA
 
 ## User Features:
 - Visualize graphs in 3D space
