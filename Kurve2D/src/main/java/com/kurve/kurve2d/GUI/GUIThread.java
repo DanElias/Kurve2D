@@ -27,7 +27,7 @@ public class GUIThread extends Thread{
     animation thread yields to other running threads. */
     private static int MAX_FRAME_SKIPS = 1;
     // M is defined by the algorithm of Spring Force Directed Graphs
-    private static int M = 250; 
+    private static int M = 500; 
     
     /**
      * Initializes object
